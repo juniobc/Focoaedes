@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <EditText
+        android:id="@+id/nm_usuario"
+        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:hint="@string/nm_usuario"/>
+
+    <EditText
+        android:id="@+id/nm_email"
+        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:hint="@string/nm_email"/>
+
+    <EditText
+        android:id="@+id/nr_telefone"
+        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:hint="@string/nr_telefone"/>
+
+    <Button
+        android:id="@+id/btn_entrar"
+        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:text="Entrar"
+        android:onClick="entrar"/>
+
+</LinearLayout>
