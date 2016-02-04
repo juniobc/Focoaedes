@@ -1,4 +1,4 @@
-package focodengue.goiania.go.gov.br.focodengue.auxiliar;
+package br.gov.go.goiania.focoaedes.auxiliar;
 
 
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.content.SharedPreferences.Editor;
 
 import java.util.HashMap;
 
-import focodengue.goiania.go.gov.br.focodengue.Login;
+import br.gov.go.goiania.focoaedes.Login;
 
 public class GerenciaSessao {
 

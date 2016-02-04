@@ -1,4 +1,4 @@
-package focodengue.goiania.go.gov.br.focodengue;
+package br.gov.go.goiania.focoaedes.focodengue;
 
 import org.junit.Test;
 

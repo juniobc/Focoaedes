@@ -3,4 +3,10 @@
     <string name="nm_usuario">Nome</string>
     <string name="nm_email">Email</string>
     <string name="nr_telefone">Numero do telefone</string>
+    <string name="ocorrencia">Ocorrencia</string>
+    <string name="tirar_foto">Tirar Foto</string>
+    <string name="ds_ambiente"><font size="16">Descreva o Ambiente</font></string>
+    <string name="nr_lat">Latitude :</string>
+    <string name="nr_long">Longitude :</string>
+    <string name="google_app_id">780507873755</string>
 </resources>

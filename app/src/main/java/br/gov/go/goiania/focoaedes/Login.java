@@ -1,4 +1,4 @@
-package focodengue.goiania.go.gov.br.focodengue;
+package br.gov.go.goiania.focoaedes;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import focodengue.goiania.go.gov.br.focodengue.Entidades.Usuario;
-import focodengue.goiania.go.gov.br.focodengue.auxiliar.GerenciaSessao;
-import focodengue.goiania.go.gov.br.focodengue.banco.UsuarioDB;
+import br.gov.go.goiania.focoaedes.entidades.Usuario;
+import br.gov.go.goiania.focoaedes.auxiliar.GerenciaSessao;
+import br.gov.go.goiania.focoaedes.banco.UsuarioDB;
 
 
 public class Login extends AppCompatActivity {
@@ -22,6 +22,8 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+
 
         sessao = new GerenciaSessao(getApplicationContext());
         this.usrDB = new UsuarioDB(this);
@@ -84,6 +86,33 @@ public class Login extends AppCompatActivity {
         return true;
 
     }
+
+    /*private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+    private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_COARSE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                } else {
+                    // permission denied
+                }
+                break;
+            }
+
+            case MY_PERMISSION_ACCESS_FINE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                } else {
+                    // permission denied
+                }
+                break;
+            }
+
+        }
+    }*/
 
     public void acessaHome(){
 

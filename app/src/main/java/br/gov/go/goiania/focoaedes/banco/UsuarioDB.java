@@ -1,4 +1,4 @@
-package focodengue.goiania.go.gov.br.focodengue.banco;
+package br.gov.go.goiania.focoaedes.banco;
 
 
 import android.content.ContentValues;
@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import focodengue.goiania.go.gov.br.focodengue.Entidades.Usuario;
+import br.gov.go.goiania.focoaedes.entidades.Usuario;
 
 public class UsuarioDB extends SQLiteOpenHelper {
 

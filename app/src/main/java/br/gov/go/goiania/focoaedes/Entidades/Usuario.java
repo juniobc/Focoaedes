@@ -1,4 +1,4 @@
-package focodengue.goiania.go.gov.br.focodengue.Entidades;
+package br.gov.go.goiania.focoaedes.entidades;
 
 
 
