@@ -43,8 +43,8 @@ public class Home extends AppCompatActivity {
         adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes,buscaFocoAedes());
 
         listFcAedesView = (ListView) findViewById(R.id.list_foco_aedes);
-
-        listFcAedesView.setAdapter(adapter);
+        if(buscaFocoAedes() != null)
+            listFcAedesView.setAdapter(adapter);
 
     }
 

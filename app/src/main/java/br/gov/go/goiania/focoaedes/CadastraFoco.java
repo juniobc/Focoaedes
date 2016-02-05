@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
@@ -19,8 +21,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.LocationListener;
 
+import br.gov.go.goiania.focoaedes.rede.EnviaFocoAedes;
+
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.gov.go.goiania.focoaedes.auxiliar.ConexaoGoogle;
 import br.gov.go.goiania.focoaedes.auxiliar.DbBitmapUtility;
@@ -100,6 +106,7 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
         if(consiste()){
 
             FocoAedes fcAedes;
+            List<FocoAedes> listfcAedes = new ArrayList<FocoAedes>();
 
             Bitmap bm = ((BitmapDrawable)imgFoto.getDrawable()).getBitmap();
 
@@ -109,6 +116,15 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
                     DbBitmapUtility.getBytes(bm));
 
             focoAedesDB.addFocoAedes(fcAedes);
+
+            /*ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                listfcAedes.add(fcAedes);
+                new EnviaFocoAedes(this, listfcAedes).execute("http://intradesv.goiania.go.gov.br/sistemas/sismp/asp/sismp22222s1.asp");
+            } else {
+                Toast.makeText(this, "Não foi possivel enviar a denuncia, favor verifique sua conexão!", Toast.LENGTH_LONG).show();
+            }*/
 
             return true;
         }

@@ -17,7 +17,7 @@ public class FocoAedesDB extends SQLiteOpenHelper {
 
     private static final String TAG = "FocoAedesDB";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "focoaedes";
     private static final String TABLE_FOCO_AEDES = "foco_aedes";
 
