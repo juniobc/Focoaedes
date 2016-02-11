@@ -8,6 +8,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -51,9 +54,19 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
         conectaLocalizacao = new ConexaoGoogle(this, this);
         conectaLocalizacao.conecta();
 
-        nrLat = (EditText) findViewById(R.id.txt_nr_lat);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Inicio"));
+        tabLayout.addTab(tabLayout.newTab().setText("Perguntas"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final PagerAdapter adapter = new FocoAedesPager (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        /*nrLat = (EditText) findViewById(R.id.txt_nr_lat);
         nrLong = (EditText) findViewById(R.id.txt_nr_long);
-        dsFocoAedes = (EditText) findViewById(R.id.ds_foco_aedes);
+        dsFocoAedes = (EditText) findViewById(R.id.ds_foco_aedes);*/
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,8 +86,8 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
         Log.d(TAG, "onLocationChanged getLatitude" + String.valueOf(location.getLatitude()));
         Log.d(TAG, "onLocationChanged getLongitude" + location.getLongitude());
 
-        nrLat.setText(String.valueOf(location.getLatitude()));
-        nrLong.setText(String.valueOf(location.getLongitude()));
+        /*nrLat.setText(String.valueOf(location.getLatitude()));
+        nrLong.setText(String.valueOf(location.getLongitude()));*/
 
     }
 
@@ -137,6 +150,16 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
 
         if(dsFocoAedes.getText().toString().equals("")){
             Toast.makeText(this, "Informe a descrição do ambiente!", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if(nrLat.toString().equals("")){
+            Toast.makeText(this, "Aguarde o local!", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if(nrLong.toString().equals("")){
+            Toast.makeText(this, "Aguarde o local!", Toast.LENGTH_LONG).show();
             return false;
         }
 

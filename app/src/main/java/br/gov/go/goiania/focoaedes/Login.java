@@ -23,8 +23,6 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-
-
         sessao = new GerenciaSessao(getApplicationContext());
         this.usrDB = new UsuarioDB(this);
 
@@ -86,33 +84,6 @@ public class Login extends AppCompatActivity {
         return true;
 
     }
-
-    /*private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
-    private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSION_ACCESS_COARSE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                } else {
-                    // permission denied
-                }
-                break;
-            }
-
-            case MY_PERMISSION_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                } else {
-                    // permission denied
-                }
-                break;
-            }
-
-        }
-    }*/
 
     public void acessaHome(){
 

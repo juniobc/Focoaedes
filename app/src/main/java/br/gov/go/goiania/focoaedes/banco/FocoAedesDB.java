@@ -13,13 +13,13 @@ import java.util.List;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
 
 
-public class FocoAedesDB extends SQLiteOpenHelper {
+public class FocoAedesDB {
+
+    private BancoHelper bh;
 
     private static final String TAG = "FocoAedesDB";
 
-    private static final int DATABASE_VERSION = 2;
-    private static final String DATABASE_NAME = "focoaedes";
-    private static final String TABLE_FOCO_AEDES = "foco_aedes";
+    private static final String TABLE_FOCO_AEDES = "t0002";
 
     private static final String KEY_ID = "cd_foco_aedes";
     private static final String KEY_DS_FOCO_AEDES = "ds_foco_aedes";
@@ -28,32 +28,18 @@ public class FocoAedesDB extends SQLiteOpenHelper {
     private static final String KEY_IMG_LOCAL = "img_local";
     private static final String KEY_DT_CAD = "dt_cad";
 
-    public FocoAedesDB(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
+    protected static final String CREATE_FOCOAEDES_TABLE = "CREATE TABLE " + TABLE_FOCO_AEDES + "("
+            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DS_FOCO_AEDES + " TEXT," + KEY_NR_LAT + " TEXT,"
+            + KEY_NR_LONG + " TEXT," + KEY_IMG_LOCAL + " BLOB, "+KEY_DT_CAD+" INTEGER)";
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    public FocoAedesDB(Context contexto){
 
-        String CREATE_FOCOAEDES_TABLE = "CREATE TABLE " + TABLE_FOCO_AEDES + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DS_FOCO_AEDES + " TEXT," + KEY_NR_LAT + " TEXT,"
-                + KEY_NR_LONG + " TEXT," + KEY_IMG_LOCAL + " BLOB, "+KEY_DT_CAD+" INTEGER)";
-
-        Log.d(TAG, "onCreate CREATE_FOCOAEDES_TABLE" + CREATE_FOCOAEDES_TABLE);
-
-        db.execSQL(CREATE_FOCOAEDES_TABLE);
-
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        Log.d(TAG, "onUpgrade");
+        bh = new BancoHelper(contexto);
 
     }
 
     public void addFocoAedes(FocoAedes fcAedes) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = bh.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_DS_FOCO_AEDES, fcAedes.getDsFocoAedes().toUpperCase());
@@ -74,7 +60,7 @@ public class FocoAedesDB extends SQLiteOpenHelper {
         String selectQuery = "SELECT "+KEY_ID+", "+KEY_DS_FOCO_AEDES+", "+KEY_NR_LAT+", "+KEY_NR_LONG+", "+KEY_DT_CAD+", "+KEY_IMG_LOCAL
                 +" FROM " + TABLE_FOCO_AEDES;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = bh.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {

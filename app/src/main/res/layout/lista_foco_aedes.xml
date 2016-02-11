@@ -1,63 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
     android:id="@+id/row">
 
-    <TextView
-        android:id="@+id/vl_produto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/img_foto"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_weight="1"
-        android:textColor="#D48FCE"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:text="Não enviado"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/status_envio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:layout_alignTop="@+id/img_foto"
+        android:layout_toRightOf="@+id/img_foto"
+        android:textSize="@dimen/title"
+        android:textStyle="bold"
+        android:text="Não Atendida"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
+    <TextView
+        android:id="@+id/ds_foco_aedes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status_envio"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/img_foto"
+        android:textSize="@dimen/rating"
+        android:text="Aqui vai a descrição do foco aedes"/>
 
-            <ImageView
-                android:id="@+id/img_foto"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:gravity="center"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-
-            <TextView
-                android:id="@+id/qt_produto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="#3FA9F5"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="Descrição do foco do aedes"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/btn_abrir_solic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ds_foco_aedes"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/img_foto"
+        android:textSize="@dimen/genre"
+        android:clickable="true"
+        android:onClick="criaSolicitacao"
+        android:text="Abrir Solicitação"/>
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -13,13 +13,6 @@ public class BancoHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private static final String DATABASE_NAME = "focoaedes";
-    private static final String TABLE_USUARIO = "t0001";
-    private static final String TABLE_FOCO_AEDES = "t0002";
-
-    private static final String KEY_DT_CAD = "dt_cad";
-
-    private static final String KEY_CD_USR = "cd_usr";
-
 
     public BancoHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,6 +21,8 @@ public class BancoHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        db.execSQL(UsuarioDB.CREATE_USUARIO_TABLE);
+        db.execSQL(FocoAedesDB.CREATE_FOCOAEDES_TABLE);
     }
 
     @Override

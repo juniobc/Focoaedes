@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Home extends AppCompatActivity {
     ListaFocoAedes adapter;
     private FocoAedesDB focoAedesDB;
     private ListView listFcAedesView;
+    private List<FocoAedes> listaFA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +42,26 @@ public class Home extends AppCompatActivity {
 
         this.focoAedesDB = new FocoAedesDB(this);
 
-        adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes,buscaFocoAedes());
+        this.listaFA = buscaFocoAedes();
+
+        adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
 
         listFcAedesView = (ListView) findViewById(R.id.list_foco_aedes);
         if(buscaFocoAedes() != null)
             listFcAedesView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onResume(){
+
+        super.onResume();
+
+        if(this.listaFA != null){
+            this.listaFA.clear();
+            this.listaFA.addAll(buscaFocoAedes());
+            adapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -72,5 +89,19 @@ public class Home extends AppCompatActivity {
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        moveTaskToBack(true);
+        finish();
+
+    }
+
+    public void criaSolicitacao(View v){
+
+        Toast.makeText(this, "testegdfgdf!", Toast.LENGTH_LONG).show();
+
     }
 }
