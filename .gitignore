@@ -10,3 +10,6 @@ gradle
 build.gradle
 settings.gradle
 gradle.properties
+.DS_Store
+captures
+app/proguard-rules.pro
