@@ -47,7 +47,6 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
 
     private static final String TAG = "CadastraFoco";
 
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private ImageView imgFoto;
     private ConexaoGoogle conectaLocalizacao;
     private EditText nrLat, nrLong, dsFocoAedes;
@@ -224,28 +223,6 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
 
         return true;
 
-    }
-
-    public void capturaImagem(View v){
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                imgFoto.setImageBitmap(photo);
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the image capture
-            } else {
-                Toast.makeText(this, "Ocorreu um erro tente novamente!" +
-                        data.getData(), Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
 }

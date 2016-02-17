@@ -35,8 +35,9 @@ public class ConsultaEndereco{
 
     private static final String TAG = "ConsultaEndereco";
     private List<Endereco> endereco = null;
-    private int tpConsulta;
+    private int tpConsulta; // 0 - Busca bairro, 1 - busca logradouro
     private CharSequence caracteres;
+    private int cd_bairro;
 
     public ConsultaEndereco(CharSequence caracteres, int tpConsulta){
 
@@ -45,64 +46,44 @@ public class ConsultaEndereco{
 
     }
 
+    public ConsultaEndereco(CharSequence caracteres, int tpConsulta, int cd_bairro){
+
+        this.tpConsulta = tpConsulta;
+        this.caracteres = caracteres;
+        this.cd_bairro = cd_bairro;
+
+    }
+
     public List<Endereco> executa(){
 
         try {
 
+            String temp = caracteres.toString().replaceAll(" ","%20");
+
             if(tpConsulta == 0)
-                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f3.asp?nm_bairro="+caracteres));
+                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f3.asp?nm_bairro="+temp));
             else if(tpConsulta == 1)
-                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f3.asp?nm_bairro=bue"));
+                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f4.asp?cd_bairro="+cd_bairro+"&nm_logr="+temp));
 
         }catch(IOException e){
+
+            e.printStackTrace();
 
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         }
 
-        Log.d(TAG, "onPostExecute - getCdBairro:"+endereco.get(0).getCdBairro());
+        /*Log.d(TAG, "onPostExecute - getCdBairro:"+endereco.get(0).getCdBairro());
         Log.d(TAG, "onPostExecute - getNmBairro:"+endereco.get(0).getNmBairro());
         Log.d(TAG, "onPostExecute - getCdLogr:"+endereco.get(0).getCdLogr());
-        Log.d(TAG, "onPostExecute - getNmLogr:"+endereco.get(0).getNmLogr());
+        Log.d(TAG, "onPostExecute - getNmLogr:"+endereco.get(0).getNmLogr());*/
 
         return endereco;
 
     }
 
-    /*public String executa(String url){
-
-        Log.d(TAG, "executa");
-
-        Log.d(TAG, "executa url: "+url);
-
-        RequestQueue queue = Volley.newRequestQueue(this.contexto);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Log.d(TAG, "executa Response.Listener - response: "+response);
-                        body = "Response is: "+ response;
-
-                        endereco = parse(response);
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Erro ao buscar endereco!");
-                body = "That didn't work!";
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-        return "";
-
-    }*/
-
     private InputStream downloadUrl(String urlString) throws IOException {
+
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000 /* milliseconds */);
@@ -117,6 +98,7 @@ public class ConsultaEndereco{
     private static final String ns = null;
 
     public List parse(InputStream in) throws XmlPullParserException, IOException {
+
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -132,25 +114,11 @@ public class ConsultaEndereco{
     }
 
     public boolean verificaErro(XmlPullParser parser) throws IOException{
-
         try{
 
             parser.require(XmlPullParser.START_TAG, ns, "msg");
 
-            while (parser.next() != XmlPullParser.END_TAG) {
-                if (parser.getEventType() != XmlPullParser.START_TAG) {
-                    continue;
-                }
-                String name = parser.getName();
-                if (name.equals("msg")) {
-                    Log.d(TAG, "verificaErro");
-                    return true;
-                } else {
-                    skip(parser);
-                }
-            }
-
-            return false;
+            return true;
 
         }catch(XmlPullParserException e){
 
@@ -228,7 +196,7 @@ public class ConsultaEndereco{
     }
 
     private Endereco leLogradouro(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, ns, "bairro");
+        parser.require(XmlPullParser.START_TAG, ns, "logr");
         int cdLogr = 0;
         String nmLogr = null;
 
@@ -287,38 +255,5 @@ public class ConsultaEndereco{
             }
         }
     }
-
-    /*public String executa(String urls) throws IOException{
-        Volley = v;
-        InputStream is = null;
-
-        URL url = new URL(urls);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        try {
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            body = writeXml(ListfcAedes);
-            OutputStream output = new BufferedOutputStream(conn.getOutputStream());
-            output.write(body.getBytes());
-            output.flush();
-
-            int response = conn.getResponseCode();
-            Log.d(TAG, "executa - O codigo da resposta é: " + response);
-
-            is = conn.getInputStream();
-
-            body = readIt(is, 500);
-
-        }finally {
-            conn .disconnect();
-        }
-
-        return "teste";
-
-    }*/
 
 }

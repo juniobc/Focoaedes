@@ -9,4 +9,6 @@
     <string name="nr_lat">Latitude :</string>
     <string name="nr_long">Longitude :</string>
     <string name="google_app_id">780507873755</string>
+    <string name="nm_bairro"><font size="16">Bairro</font></string>
+    <string name="nm_logr"><font size="16">Logradouro</font></string>
 </resources>

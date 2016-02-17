@@ -17,17 +17,25 @@ import java.util.List;
 import br.gov.go.goiania.focoaedes.entidades.Endereco;
 import br.gov.go.goiania.focoaedes.rede.ConsultaEndereco;
 
-public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+public class BuscaEnderecoAdapter extends ArrayAdapter<Endereco> implements Filterable {
 
-    private static final String TAG = "AutoCompleteAdapter";
+    private static final String TAG = "BuscaEnderecoAdapter";
 
     private LayoutInflater mInflater;
     private int tpConsulta;
+    private int cdBairro;
 
-    public AutoCompleteAdapter(Context context, int tpConsulta) {
+    public BuscaEnderecoAdapter(Context context, int tpConsulta) {
         super(context, -1);
         mInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         this.tpConsulta = tpConsulta;
+    }
+
+    public BuscaEnderecoAdapter(Context context, int tpConsulta, int cdBairro) {
+        super(context, -1);
+        mInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        this.tpConsulta = tpConsulta;
+        this.cdBairro = cdBairro;
     }
 
     @Override
@@ -39,7 +47,15 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
             tv = (TextView) mInflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
         }
 
-        tv.setText(getItem(position));
+        switch(tpConsulta){
+            case 0:
+                tv.setText(getItem(position).getNmBairro());
+                break;
+            case 1:
+                tv.setText(getItem(position).getNmLogr());
+                break;
+        }
+
         return tv;
     }
 
@@ -52,13 +68,20 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
 
                 List<Endereco> enderecos = null;
 
-                if (constraint != null) {
+                if (constraint != null && constraint.length() >= 3) {
 
-                    enderecos = new ConsultaEndereco(constraint, tpConsulta).executa();
+                    switch(tpConsulta){
+                        case 0:
+                            enderecos = new ConsultaEndereco(constraint, tpConsulta).executa();
+                            break;
+                        case 1:
+                            enderecos = new ConsultaEndereco(constraint, tpConsulta, cdBairro).executa();
+                            break;
+                    }
 
                 }
 
-                if (enderecos == null) {
+                if(enderecos == null){
                     enderecos = new ArrayList<Endereco>();
                 }
 
@@ -75,7 +98,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
                 clear();
 
                 for (Endereco enderecos : (List<Endereco>) results.values) {
-                    add(enderecos.getNmBairro());
+                    add(enderecos);
                 }
                 if (results.count > 0) {
                     notifyDataSetChanged();
@@ -89,10 +112,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
 
         return myFilter;
 
-    }
-
-    private String formataEndereco(final Endereco endereco) {
-        return endereco.getNmBairro();
     }
 
 }
