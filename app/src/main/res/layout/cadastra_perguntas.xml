@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_tp_local"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <Spinner
+            android:id="@+id/tp_local"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_ds_horario"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <EditText
+            android:id="@+id/ds_horario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ds_horario"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_st_local"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <CheckBox android:id="@+id/st_local_1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/st_local_1"/>
+
+        <CheckBox android:id="@+id/st_local_2"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_2"/>
+
+        <CheckBox android:id="@+id/st_local_3"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_3"/>
+
+        <CheckBox android:id="@+id/st_local_4"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_4"/>
+
+        <CheckBox android:id="@+id/st_local_5"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_5"/>
+
+        <CheckBox android:id="@+id/st_local_6"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_6"/>
+
+        <CheckBox android:id="@+id/st_local_7"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_7"/>
+
+        <CheckBox android:id="@+id/st_local_8"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_8"/>
+
+        <CheckBox android:id="@+id/st_local_9"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/st_local_9"/>
+
+        <Spinner
+            android:id="@+id/lote_vago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+</LinearLayout>

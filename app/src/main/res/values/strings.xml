@@ -11,4 +11,35 @@
     <string name="google_app_id">780507873755</string>
     <string name="nm_bairro"><font size="16">Bairro</font></string>
     <string name="nm_logr"><font size="16">Logradouro</font></string>
+    <string-array name="tp_local">
+
+        <item><font size="16">RESIDÊNCIA</font></item>
+        <item><font size="16">COMÉRCIO</font></item>
+        <item><font size="16">ÓRGÃO PÚBLICO</font></item>
+        <item><font size="16">MONUMENTOS</font></item>
+        <item><font size="16">OUTROS</font></item>
+
+    </string-array>
+    <string name="ds_horario"><font size="16">Horario para visita</font></string>
+
+    <string name='st_local_1'><font size="16">PRESENÇA DE VÁRIOS MOSQUITOS NO LOCAL</font></string>
+    <string name='st_local_2'><font size="16">ALGUÉM NO LOCAL ESTÁ COM DENGUE/ZIKA/CHIKUNGUNYA OU COM SUSPEITA</font></string>
+    <string name='st_local_3'><font size="16">PISCINA SEM TRATAMENTO</font></string>
+    <string name='st_local_4'><font size="16">FOSSA SEM TAMPA</font></string>
+    <string name='st_local_5'><font size="16">CAIXA DE ÁGUA SEM TAMPA</font></string>
+    <string name='st_local_6'><font size="16">IMÓVEL DESABITADO</font></string>
+    <string name='st_local_7'><font size="16">PNEUS EXPOSTOS AO TEMPO</font></string>
+    <string name='st_local_8'><font size="16">LOTE VAGO</font></string>
+    <string name='st_local_9'><font size="16">OUTRAS SITUAÇÕES</font></string>
+
+    <string-array name="lote_vago">
+
+        <item><font size="16">ESTÁ COM LIXO</font></item>
+        <item><font size="16">ESTÁ COM ENTULHO</font></item>
+        <item><font size="16">ESTÁ COM MATAGAL</font></item>
+
+    </string-array>
+    <string name="label_tp_local"><font size="16">TIPO DO LOCAL/IMÓVEL</font></string>
+    <string name="label_ds_horario"><font size="16">MELHOR HORÁRIO PARA A VISITA</font></string>
+    <string name="label_st_local"><font size="16">SITUAÇÃO DO LOCAL DENUNCIADO</font></string>
 </resources>
