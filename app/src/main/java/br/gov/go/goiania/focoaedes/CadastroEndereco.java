@@ -14,9 +14,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +40,15 @@ public class CadastroEndereco extends Fragment {
     private ImageView imgFoto;
     private Button btnTiraFoto;
 
+    private Spinner selTpLogr;
+    private ArrayAdapter<CharSequence> adapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.cadastra_endereco, container, false);
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         this.buscaBairro = (CustomAutoCompleteView) view.findViewById(R.id.busca_bairro);
         this.txtCdBairro = (TextView) view.findViewById(R.id.cd_bairro);
@@ -50,6 +58,14 @@ public class CadastroEndereco extends Fragment {
 
         this.imgFoto = (ImageView) view.findViewById(R.id.img_foto);
 
+        selTpLogr = (Spinner) view.findViewById(R.id.sel_tp_logr);
+
+
+        adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.sel_tp_logr, android.R.layout.simple_spinner_item);
+
+        selTpLogr.setAdapter(adapter);
+
         BuscaEnderecoAdapter adapterBairro = new BuscaEnderecoAdapter(getActivity(),0);
 
         this.buscaBairro.setAdapter(adapterBairro);
@@ -58,10 +74,11 @@ public class CadastroEndereco extends Fragment {
         this.buscaBairro.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-
-                if (!buscaBairro.isSelectionFromPopUp() && hasFocus) {
+                
+                if (!buscaBairro.isSelectionFromPopUp()) {
                     buscaBairro.setText("");
                     txtCdBairro.setText("");
+                    buscaLogr.setText("");
                 }
             }
         });
@@ -69,7 +86,7 @@ public class CadastroEndereco extends Fragment {
         this.buscaBairro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                
                 int cdBairro;
 
                 Endereco endereco = (Endereco) parent.getAdapter().getItem(position);
@@ -117,7 +134,7 @@ public class CadastroEndereco extends Fragment {
         this.buscaLogr.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!buscaLogr.isSelectionFromPopUp() && hasFocus) {
+                if (!buscaLogr.isSelectionFromPopUp()) {
                     buscaLogr.setText("");
                 }
             }

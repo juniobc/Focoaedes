@@ -1,80 +1,81 @@
 package br.gov.go.goiania.focoaedes;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.location.Address;
-import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.os.ResultReceiver;
-import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationListener;
-
-import br.gov.go.goiania.focoaedes.localizacao.BuscaEndereco;
+import br.gov.go.goiania.focoaedes.rede.EnviaFoco;
 import br.gov.go.goiania.focoaedes.rede.EnviaFocoAedes;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import android.os.Handler;
-
-import br.gov.go.goiania.focoaedes.auxiliar.ConexaoGoogle;
-import br.gov.go.goiania.focoaedes.auxiliar.DbBitmapUtility;
-import br.gov.go.goiania.focoaedes.banco.FocoAedesDB;
-import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
-
-public class CadastraFoco extends AppCompatActivity implements LocationListener {
+public class CadastraFoco extends AppCompatActivity{
 
     private static final String TAG = "CadastraFoco";
 
-    private ImageView imgFoto;
-    private ConexaoGoogle conectaLocalizacao;
-    private EditText nrLat, nrLong, dsFocoAedes;
-    private FocoAedesDB focoAedesDB;
-    private Location mLastLocation;
-    //AddressResultReceiver mResultReceiver;
+    private ViewPager viewPager;
+
+    private EditText dsFocoAedes;
+    private TextView cdBairro;
+    private TextView cdLogr;
+
+    private Spinner selTpLocal;
+    private EditText melhorHorario;
+    private CheckBox chkStLocal1;
+    private CheckBox chkStLocal2;
+    private CheckBox chkStLocal3;
+    private CheckBox chkStLocal4;
+    private CheckBox chkStLocal5;
+    private CheckBox chkStLocal6;
+    private CheckBox chkStLocal7;
+    private CheckBox chkStLocal8;
+    private CheckBox chkStLocal9;
+    private Spinner selLoteVago;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cadastra_foco);
 
-        /*conectaLocalizacao = new ConexaoGoogle(this, this);
-        conectaLocalizacao.conecta();*/
+        viewPager = (ViewPager) findViewById(R.id.pager);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Inicio"));
         tabLayout.addTab(tabLayout.newTab().setText("Perguntas"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new FocoAedesPager (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        /*nrLat = (EditText) findViewById(R.id.txt_nr_lat);
-        nrLong = (EditText) findViewById(R.id.txt_nr_long);
-        dsFocoAedes = (EditText) findViewById(R.id.ds_foco_aedes);*/
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,70 +83,6 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        imgFoto = (ImageView) findViewById(R.id.img_foto);
-
-        this.focoAedesDB = new FocoAedesDB(this);
-
-        //mResultReceiver = new AddressResultReceiver(null);
-
-
-    }
-
-    /*protected void startIntentService() {
-        Intent intent = new Intent(this, BuscaEndereco.class);
-        intent.putExtra(BuscaEndereco.RECEIVER, mResultReceiver);
-        intent.putExtra(BuscaEndereco.LOCATION_DATA_EXTRA, this.mLastLocation);
-        startService(intent);
-    }
-
-    @SuppressLint("ParcelCreator")
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, final Bundle resultData) {
-
-            final Address address = resultData.getParcelable(BuscaEndereco.LOCATION_DATA_EXTRA);
-            final String message = resultData.getString(BuscaEndereco.RESULT_DATA_KEY);
-
-            if (resultCode == BuscaEndereco.SUCCESS_RESULT) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //progressBar.setVisibility(View.GONE);
-                        //infoText.setVisibility(View.VISIBLE);
-                        Log.d(TAG, " onReceiveResult Sucess - " +
-                                "CEP: " + address.getAddressLine(1));
-                    }
-                });
-            }else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //progressBar.setVisibility(View.GONE);
-                        //infoText.setVisibility(View.VISIBLE);
-                        Log.d(TAG, "onReceiveResult Error"+message);
-                    }
-                });
-            }
-        }
-    }*/
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        Log.d(TAG, "onLocationChanged getLatitude" + String.valueOf(location.getLatitude()));
-        Log.d(TAG, "onLocationChanged getLongitude" + location.getLongitude());
-
-        /*nrLat.setText(String.valueOf(location.getLatitude()));
-        nrLong.setText(String.valueOf(location.getLongitude()));*/
-
-        mLastLocation = location;
-
-        //startIntentService();
 
     }
 
@@ -164,60 +101,146 @@ public class CadastraFoco extends AppCompatActivity implements LocationListener 
         if (id == android.R.id.home) {
             finish();
         }else if(id == R.id.menu_salvar){
-
-            if(cadastraFoco())
-                finish();
+            cadastraFoco();
+            //if(cadastraFoco())
+                //finish();
         }
 
-        return true;//super.onOptionsItemSelected(item);
+        return true;
     }
 
-    public boolean cadastraFoco(){
+    public void iniViewPagerVariaveis(){
 
-        if(consiste()){
+        dsFocoAedes = (EditText) viewPager.findViewById(R.id.ds_foco_aedes);
+        cdBairro = (TextView) viewPager.findViewById(R.id.cd_bairro);
+        cdLogr = (TextView) viewPager.findViewById(R.id.cd_bairro);
 
-            FocoAedes fcAedes;
-            List<FocoAedes> listfcAedes = new ArrayList<FocoAedes>();
+        selTpLocal = (Spinner) viewPager.findViewById(R.id.tp_local);
 
-            Bitmap bm = ((BitmapDrawable)imgFoto.getDrawable()).getBitmap();
+        melhorHorario = (EditText) viewPager.findViewById(R.id.ds_horario);
+        chkStLocal1 = (CheckBox) viewPager.findViewById(R.id.st_local_1);
+        chkStLocal2 = (CheckBox) viewPager.findViewById(R.id.st_local_2);
+        chkStLocal3 = (CheckBox) viewPager.findViewById(R.id.st_local_3);
+        chkStLocal4 = (CheckBox) viewPager.findViewById(R.id.st_local_4);
+        chkStLocal5 = (CheckBox) viewPager.findViewById(R.id.st_local_5);
+        chkStLocal6 = (CheckBox) viewPager.findViewById(R.id.st_local_6);
+        chkStLocal7 = (CheckBox) viewPager.findViewById(R.id.st_local_7);
+        chkStLocal8 = (CheckBox) viewPager.findViewById(R.id.st_local_8);
+        chkStLocal9 = (CheckBox) viewPager.findViewById(R.id.st_local_9);
 
-            fcAedes = new FocoAedes(dsFocoAedes.getText().toString(),
-                    nrLat.getText().toString(),
-                    nrLong.getText().toString(),
-                    DbBitmapUtility.getBytes(bm));
+        selLoteVago = (Spinner) viewPager.findViewById(R.id.sel_lote_vago);
 
-            focoAedesDB.addFocoAedes(fcAedes);
 
-            /*ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                listfcAedes.add(fcAedes);
-                new EnviaFocoAedes(this, listfcAedes).execute("http://intradesv.goiania.go.gov.br/sistemas/sismp/asp/sismp22222s1.asp");
-            } else {
-                Toast.makeText(this, "Não foi possivel enviar a denuncia, favor verifique sua conexão!", Toast.LENGTH_LONG).show();
-            }*/
+    }
 
-            return true;
-        }
+    public void cadastraFoco(){
 
-        return false;
+        iniViewPagerVariaveis();
+
+        //if(consiste()){
+
+            /*Toast.makeText(CadastraFoco.this, "dsFocoAedes: "+dsFocoAedes.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "cdBairro: "+cdBairro.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "cdLogr: "+cdLogr.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "selTpLocal: "+selTpLocal.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "melhorHorario: "+melhorHorario.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal1: "+chkStLocal1.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal2: "+chkStLocal2.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal3: "+chkStLocal3.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal4: "+chkStLocal4.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal5: "+chkStLocal5.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal6: "+chkStLocal6.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal7: "+chkStLocal7.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal8: "+chkStLocal8.isChecked(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "chkStLocal9: "+chkStLocal9.isChecked(), Toast.LENGTH_SHORT).show();
+            if(chkStLocal8.isChecked())
+                Toast.makeText(CadastraFoco.this, "selLoteVago: "+selLoteVago.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();*/
+
+            //new EnviaFocoAedes(this, null).execute();
+
+            EnviaFoco envia = new EnviaFoco(this);
+
+            envia.executa();
+
+        //}
+
+        //Toast.makeText(CadastraFoco.this, melhorHorario.getText().toString(), Toast.LENGTH_SHORT).show();
 
     }
 
     public boolean consiste(){
 
-        if(dsFocoAedes.getText().toString().equals("")){
-            Toast.makeText(this, "Informe a descrição do ambiente!", Toast.LENGTH_LONG).show();
+        iniViewPagerVariaveis();
+
+        boolean flagStLocal = true;
+        boolean flagLoteVago = false;
+
+        if(cdBairro.getText().toString().equals("") || cdBairro.getText().toString().equals("0")){
+
+            Toast.makeText(CadastraFoco.this, "Informe o bairro!", Toast.LENGTH_LONG).show();
             return false;
+
         }
 
-        if(nrLat.toString().equals("")){
-            Toast.makeText(this, "Aguarde o local!", Toast.LENGTH_LONG).show();
+        if(cdLogr.getText().toString().equals("") || cdLogr.getText().toString().equals("0")){
+
+            Toast.makeText(CadastraFoco.this, "Informe o logradouro!", Toast.LENGTH_LONG).show();
             return false;
+
         }
 
-        if(nrLong.toString().equals("")){
-            Toast.makeText(this, "Aguarde o local!", Toast.LENGTH_LONG).show();
+        if(selTpLocal.getSelectedItemPosition() == 0){
+
+            Toast.makeText(CadastraFoco.this, "Informe o tipo do local!", Toast.LENGTH_LONG).show();
+            return false;
+
+        }
+
+        if(melhorHorario.getText().toString().equals("")){
+
+            Toast.makeText(CadastraFoco.this, "Informe o melhor horario para visita!", Toast.LENGTH_LONG).show();
+            return false;
+
+        }
+
+        if(chkStLocal1.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal2.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal3.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal4.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal5.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal6.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal7.isChecked())
+            flagStLocal = false;
+
+        if(chkStLocal8.isChecked()){
+            flagStLocal = false;
+            flagLoteVago = true;
+        }
+
+        if(chkStLocal9.isChecked())
+            flagStLocal = false;
+
+        if(flagLoteVago){
+            if(selLoteVago.getSelectedItemPosition() == 0){
+                Toast.makeText(CadastraFoco.this, "Informe a situação do lote vago!", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        if(flagStLocal){
+            Toast.makeText(CadastraFoco.this, "Informe a situação do local!", Toast.LENGTH_LONG).show();
             return false;
         }
 

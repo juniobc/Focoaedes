@@ -4,10 +4,13 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.AutoCompleteTextView;
 
 public class CustomAutoCompleteView extends AutoCompleteTextView {
+
+    private static final String TAG = "CustomAutoCompleteView";
 
     {
         addTextChangedListener(new TextWatcher() {
@@ -23,6 +26,7 @@ public class CustomAutoCompleteView extends AutoCompleteTextView {
 
             @Override
             public void afterTextChanged(Editable s) {
+                Log.d(TAG, "afterTextChanged ");
                 mSelectionFromPopUp = false;
             }
         });
@@ -60,6 +64,11 @@ public class CustomAutoCompleteView extends AutoCompleteTextView {
     }
 
     @Override
+    public boolean enoughToFilter() {
+        return true;
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (getAdapter() != null) {
             performFiltering(getText(), 0);
@@ -74,7 +83,7 @@ public class CustomAutoCompleteView extends AutoCompleteTextView {
     @Override
     protected void replaceText(final CharSequence text) {
         super.replaceText(text);
-
+        Log.d(TAG, "replaceText ");
         mSelectionFromPopUp = true;
 
     }

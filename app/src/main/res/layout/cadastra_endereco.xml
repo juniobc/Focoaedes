@@ -1,57 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="@color/branco">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/img_foto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/sem_imagem"/>
-
-        <Button
-            android:id="@+id/btn_tira_foto"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:hint="@string/tirar_foto"/>
-
-        <EditText
-            android:id="@+id/ds_foco_aedes"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:hint="@string/ds_ambiente"/>
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@color/branco">
+
+            <ImageView
+                android:id="@+id/img_foto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/sem_imagem"/>
+
+            <Button
+                android:id="@+id/btn_tira_foto"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:hint="@string/tirar_foto"/>
+
+            <EditText
+                android:id="@+id/ds_foco_aedes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|left"
+                android:hint="@string/ds_ambiente"/>
+
+        </LinearLayout>
+
+        <TextView android:id="@+id/cd_bairro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text=""/>
+
+        <br.gov.go.goiania.focoaedes.auxiliar.CustomAutoCompleteView
+            android:id="@+id/busca_bairro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nm_bairro"/>
+
+        <Spinner
+            android:id="@+id/sel_tp_logr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <br.gov.go.goiania.focoaedes.auxiliar.CustomAutoCompleteView
+            android:id="@+id/busca_logr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nm_logr"/>
+
+        <TextView android:id="@+id/cd_logr"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:visibility="gone"
+                  android:text=""/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ds_quadra"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ds_lote"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nr_end"/>
 
     </LinearLayout>
 
-    <TextView android:id="@+id/cd_bairro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-
-    <br.gov.go.goiania.focoaedes.auxiliar.CustomAutoCompleteView
-        android:id="@+id/busca_bairro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/nm_bairro"/>
-
-    <br.gov.go.goiania.focoaedes.auxiliar.CustomAutoCompleteView
-        android:id="@+id/busca_logr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/nm_logr"/>
-
-    <TextView android:id="@+id/cd_logr"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:visibility="gone"/>
-
-</LinearLayout>
+</ScrollView>
