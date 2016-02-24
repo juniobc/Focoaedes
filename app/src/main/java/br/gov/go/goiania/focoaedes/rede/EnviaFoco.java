@@ -1,9 +1,13 @@
 package br.gov.go.goiania.focoaedes.rede;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -14,12 +18,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by m1031007 on 22/02/2016.
- */
+import br.gov.go.goiania.focoaedes.R;
+
 public class EnviaFoco {
 
     private static final String TAG = "EnviaFoco";
@@ -37,54 +45,86 @@ public class EnviaFoco {
 
     public void executa(){
 
-        StringRequest stringRequest =  new StringRequest(Request.Method.POST, REGISTER_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        pd.dismiss();
-                        Log.d(TAG, "onResponse: " + response);
-                        new AlertDialog.Builder(contexto)
-                                .setTitle("Resposta")
-                                .setMessage(response)
-                                .show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        pd.dismiss();
-                        new AlertDialog.Builder(contexto)
-                                .setTitle("Resposta")
-                                .setMessage(error.toString())
-                                .show();
-                    }
-                }){
+        Map<String,String> params = new HashMap<String, String>();
+        params.put("opr","abre_solicitacao");
+        params.put("txt_cd_contri","532");
+        params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
+        params.put("txt_cd_munic","25300");
+        params.put("txt_nr_cpf_contri","03120401137");
+        params.put("txt_in_email_contri","juniobc@gmail.com");
+        params.put("txt_cd_servico","190");
+
+        params.put("txt_cd_munic_solicitacao","25300");
+        params.put("txt_cd_bairro_solicitacao","105");
+        params.put("txt_cd_logr_solicitacao","20143");
+        params.put("txt_en_lt_logr_solicitacao","456");
+        params.put("txt_en_qd_logr_solicitacao","65");
+        params.put("txt_en_nr_logr_solicitacao","8595");
+
+        params.put("txt_tp_logr_solicitacao","RUA");
+        params.put("txt_nm__munic_solicitacao","GOIANIA");
+        params.put("txt_nm_bairro_solicitacao","SETOR CRIMEIA OESTE");
+        params.put("txt_nm_logr_solicitacao","DES AIROSA ALVES DE CASTRO");
+        params.put("txt_ds_solicitacao", "teste de inclusao");
+
+        ImageView image = (ImageView) ((Activity) contexto).findViewById(R.id.img_foto);
+
+        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+
+        //create a file to write bitmap data
+        File file = new File(contexto.getCacheDir(), "teste");
+
+        try {
+            file.createNewFile();
+
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+
+            //write the bytes in file
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        MultipartRequest stringRequest = new MultipartRequest(REGISTER_URL,new Response.ErrorListener() {
 
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("opr","Inclui_solicitacao");
-                params.put("txt_cd_contri","532");
-                params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
-                params.put("txt_cd_munic","25300");
-                params.put("txt_nr_cpf_contri","03120401137");
-                params.put("txt_in_email_contri","juniobc@gmail.com");
-                params.put("txt_cd_servico","190");
+            public void onErrorResponse(VolleyError error) {
+                pd.dismiss();
+                new AlertDialog.Builder(contexto)
+                        .setTitle("Resposta")
+                        .setMessage(error.toString())
+                        .show();
+            }
+        },new Response.Listener<String>() {
 
-                params.put("txt_cd_munic_solic","25300");
-                params.put("txt_cd_bairro_solic","16");
-                params.put("txt_cd_logr_solic","20143");
-                params.put("txt_en_lt_logr_solic","s2");
-                params.put("txt_en_qd_logr_solic","q10");
-                params.put("txt_en_nr_logr_solic","3659");
+            @Override
+            public void onResponse(String response) {
+                pd.dismiss();
+                Log.d(TAG, "onResponse: " + response);
+                new AlertDialog.Builder(contexto)
+                        .setTitle("Resposta")
+                        .setMessage(response)
+                        .show();
+            }
+        },file, params){
 
-                params.put("sel_tp_logr_solicitacao","PCA");
-                params.put("txt_nm_cd_munic_solicitacao","GOIANIA");
-                params.put("txt_nm_cd_bairro_solicitacao","16");
-                params.put("txt_nm_cd_logr_solicitacao","20143");
-                params.put("txt_ds_solicitacao","teste de inclusao");
+            @Override
+            public Map<String,String> getParams(){
+
+                Map<String,String> params = new HashMap<String,String>();
+
+                params.put("opr","teste");
+
                 return params;
             }
+
         };
 
         pd = new ProgressDialog(contexto);
@@ -93,16 +133,7 @@ public class EnviaFoco {
         pd.show();
 
         RequestQueue requestQueue = Volley.newRequestQueue(contexto);
-        /*Map<String, String> params;
-        try{
-            params = stringRequest.getHeaders();
-            for (Map.Entry<String, String> entry : params.entrySet())
-            {
-                Toast.makeText(contexto, entry.getKey()+" : "+entry.getValue(), Toast.LENGTH_SHORT).show();
-            }
-        } catch (AuthFailureError error){
-            Toast.makeText(contexto, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
-        }*/
+
         requestQueue.add(stringRequest);
 
     }
