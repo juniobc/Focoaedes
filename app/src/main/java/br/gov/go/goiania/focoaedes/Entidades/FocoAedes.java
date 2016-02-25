@@ -3,17 +3,16 @@ package br.gov.go.goiania.focoaedes.entidades;
 
 public class FocoAedes {
 
+    private int cdFocoAedes;
     private String dsFocoAedes;
-    private String nrLat;
-    private String nrLong;
-    private byte[] imgLocal;
+    private String status;
+    private String urlImg;
 
-    public FocoAedes(String dsFocoAedes, String nrLat, String nrLong, byte[] imgLocal) {
+    public FocoAedes(int cdFocoAedes, String dsFocoAedes, String status) {
 
+        this.cdFocoAedes = cdFocoAedes;
         this.dsFocoAedes = dsFocoAedes;
-        this.nrLat = nrLat;
-        this.nrLong = nrLong;
-        this.imgLocal = imgLocal;
+        this.status = status;
     }
 
 
@@ -25,28 +24,28 @@ public class FocoAedes {
         this.dsFocoAedes = dsFocoAedes;
     }
 
-
-    public String getNrLat() {
-        return nrLat;
+    public String getUrlImg() {
+        return urlImg;
     }
 
-    public void setNrLat(String nrLat) {
-        this.nrLat = nrLat;
+    public void setUrlImg(String urlImg) {
+        this.urlImg = urlImg;
     }
 
-    public String getNrLong() {
-        return nrLong;
+
+    public int getCdFocoAedes() {
+        return cdFocoAedes;
     }
 
-    public void setNrLong(String nrLong) {
-        this.nrLong = nrLong;
+    public void setCdFocoAedes(int cdFocoAedes) {
+        this.cdFocoAedes = cdFocoAedes;
     }
 
-    public byte[] getImgLocal() {
-        return imgLocal;
+    public String getStatus() {
+        return status;
     }
 
-    public void setImgLocal(byte[] imgLocal) {
-        this.imgLocal = imgLocal;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
