@@ -51,7 +51,7 @@ public class ListaFocoAedes extends ArrayAdapter<FocoAedes> {
 
         ImageView imgFoco = (ImageView) convertView.findViewById(R.id.img_foto);
 
-        imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
+        //imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
 
         return convertView;
 

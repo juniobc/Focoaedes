@@ -18,6 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import br.gov.go.goiania.focoaedes.rede.EnviaFoco;
 import br.gov.go.goiania.focoaedes.rede.EnviaFocoAedes;
 
@@ -137,9 +140,9 @@ public class CadastraFoco extends AppCompatActivity{
 
         iniViewPagerVariaveis();
 
-        //if(consiste()){
+        if(consiste()){
 
-            /*Toast.makeText(CadastraFoco.this, "dsFocoAedes: "+dsFocoAedes.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(CadastraFoco.this, "dsFocoAedes: "+dsFocoAedes.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "cdBairro: "+cdBairro.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "cdLogr: "+cdLogr.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "selTpLocal: "+selTpLocal.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();
@@ -154,15 +157,39 @@ public class CadastraFoco extends AppCompatActivity{
             Toast.makeText(CadastraFoco.this, "chkStLocal8: "+chkStLocal8.isChecked(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "chkStLocal9: "+chkStLocal9.isChecked(), Toast.LENGTH_SHORT).show();
             if(chkStLocal8.isChecked())
-                Toast.makeText(CadastraFoco.this, "selLoteVago: "+selLoteVago.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(CadastraFoco.this, "selLoteVago: "+selLoteVago.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();
 
             //new EnviaFocoAedes(this, null).execute();
 
-            EnviaFoco envia = new EnviaFoco(this);
+            /*Map<String, String> params = new HashMap<String,String>();
+            params.put("opr","abre_solicitacao");
+            params.put("txt_cd_contri","532");
+            params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
+            params.put("txt_cd_munic","25300");
+            params.put("txt_nr_cpf_contri","03120401137");
+            params.put("txt_in_email_contri","juniobc@gmail.com");
+            params.put("txt_cd_servico","190");
 
-            envia.executa();
+            params.put("txt_cd_munic_solicitacao","25300");
+            params.put("txt_cd_bairro_solicitacao","105");
+            params.put("txt_cd_logr_solicitacao","20143");
+            params.put("txt_en_lt_logr_solicitacao","456");
+            params.put("txt_en_qd_logr_solicitacao","65");
+            params.put("txt_en_nr_logr_solicitacao","8595");
 
-        //}
+            params.put("txt_tp_logr_solicitacao","RUA");
+            params.put("txt_nm__munic_solicitacao","GOIANIA");
+            params.put("txt_nm_bairro_solicitacao","SETOR CRIMEIA OESTE");
+            params.put("txt_nm_logr_solicitacao","DES AIROSA ALVES DE CASTRO");
+            params.put("txt_ds_solicitacao", "teste de inclusao");
+
+            EnviaFoco envia = new EnviaFoco(this, params);
+
+            envia.executa();*/
+
+            //new EnviaFocoAedes(this).execute();
+
+        }
 
         //Toast.makeText(CadastraFoco.this, melhorHorario.getText().toString(), Toast.LENGTH_SHORT).show();
 

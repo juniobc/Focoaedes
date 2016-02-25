@@ -35,11 +35,14 @@ public class EnviaFoco {
     private ProgressDialog pd;
 
     private static final String REGISTER_URL = "http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004a0.asp";
+    //private static final String REGISTER_URL = "http://intradesv.goiania.go.gov.br/sistemas/sismp/asp/sismp22222f0.asp";
     private Context contexto;
+    private Map<String,String> params;
 
-    public EnviaFoco(Context contexto){
+    public EnviaFoco(Context contexto, Map<String,String> params){
 
         this.contexto = contexto;
+        this.params = params;
 
     }
 
@@ -79,7 +82,7 @@ public class EnviaFoco {
 
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
             byte[] bitmapdata = bos.toByteArray();
 
             //write the bytes in file
@@ -113,19 +116,35 @@ public class EnviaFoco {
                         .setMessage(response)
                         .show();
             }
-        },file, params){
+        },file, params);
 
+        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        pd.dismiss();
+                        Log.d(TAG, "onResponse: " + response);
+                        new AlertDialog.Builder(contexto)
+                                .setTitle("Resposta")
+                                .setMessage(response)
+                                .show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "response: erro");
+            }
+        }){
             @Override
             public Map<String,String> getParams(){
 
                 Map<String,String> params = new HashMap<String,String>();
 
-                params.put("opr","teste");
+                params.put("opr","oprsadfsdf");
 
                 return params;
             }
-
-        };
+        };*/
 
         pd = new ProgressDialog(contexto);
 

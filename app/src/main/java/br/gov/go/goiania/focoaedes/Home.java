@@ -16,6 +16,7 @@ import java.util.List;
 import br.gov.go.goiania.focoaedes.auxiliar.ListaFocoAedes;
 import br.gov.go.goiania.focoaedes.banco.FocoAedesDB;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
+import br.gov.go.goiania.focoaedes.rede.ConsultaFocoAedes;
 
 public class Home extends AppCompatActivity {
 
@@ -42,13 +43,15 @@ public class Home extends AppCompatActivity {
 
         this.focoAedesDB = new FocoAedesDB(this);
 
-        this.listaFA = buscaFocoAedes();
+        new ConsultaFocoAedes(this).execute();
 
-        adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
+        //this.listaFA = buscaFocoAedes();
+
+        /*adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
 
         listFcAedesView = (ListView) findViewById(R.id.list_foco_aedes);
         if(buscaFocoAedes() != null)
-            listFcAedesView.setAdapter(adapter);
+            listFcAedesView.setAdapter(adapter);*/
 
     }
 
@@ -57,19 +60,19 @@ public class Home extends AppCompatActivity {
 
         super.onResume();
 
-        if(this.listaFA != null){
+        /*if(this.listaFA != null){
             this.listaFA.clear();
             this.listaFA.addAll(buscaFocoAedes());
             adapter.notifyDataSetChanged();
-        }
+        }*/
 
     }
 
-    public List<FocoAedes> buscaFocoAedes(){
+    /*public List<FocoAedes> buscaFocoAedes(){
 
-        return focoAedesDB.getTodosFocosAedes();
+        return new ConsultaFocoAedes(this).execute();
 
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

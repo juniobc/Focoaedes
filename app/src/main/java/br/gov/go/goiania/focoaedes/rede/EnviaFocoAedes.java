@@ -1,10 +1,14 @@
 package br.gov.go.goiania.focoaedes.rede;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,15 +17,31 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.gov.go.goiania.focoaedes.R;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
 
 public class EnviaFocoAedes extends AsyncTask<String, Void, String> {
 
-    private static final String REGISTER_URL = "http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004a0.asp";
+    private static final String REGISTER_URL = "http://intradesv.goiania.go.gov.br/sistemas/sismp/asp/sismp22222f0.asp";
     private static String resposta;
 
     Context contexto;
@@ -30,27 +50,29 @@ public class EnviaFocoAedes extends AsyncTask<String, Void, String> {
     String body;
     private static final String TAG = "EnviaFocoAedes";
 
-    public EnviaFocoAedes(Context context, List<FocoAedes> ListfcAedes){
+    public EnviaFocoAedes(Context context){
         this.contexto = context;
-        this.ListfcAedes = ListfcAedes;
+        //this.ListfcAedes = ListfcAedes;
     }
 
     @Override
     protected String doInBackground(String... urls) {
 
-        return executa();
+        return chamaConexao();
 
     }
 
     @Override
     protected void onPreExecute() {
-        /*pd = new ProgressDialog(contexto);
+        pd = new ProgressDialog(contexto);
         pd.setMessage("Enviando dados...");
-        pd.show();*/
+        pd.show();
     }
 
     @Override
     protected void onPostExecute(String result) {
+
+        pd.dismiss();
 
         new AlertDialog.Builder(contexto)
                 .setTitle("Resposta")
@@ -59,119 +81,63 @@ public class EnviaFocoAedes extends AsyncTask<String, Void, String> {
 
     }
 
-    public String executa(){
+    public String chamaConexao(){
 
-        StringRequest stringRequest =  new StringRequest(Request.Method.POST, REGISTER_URL,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d(TAG, "onResponse: " + response);
-                    resposta = response;
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d(TAG, "onErrorResponse: " + error);
-                    //Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    resposta = "Erro: "+error.toString();
-                }
-            }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("opr","Inclui_solicitacao");
-                params.put("txt_cd_contri","532");
-                params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
-                params.put("txt_cd_munic","25300");
-                params.put("txt_nr_cpf_contri","03120401137");
-                params.put("txt_in_email_contri","juniobc@gmail.com");
-                params.put("txt_cd_servico","190");
+        ImageView image = (ImageView) ((Activity) contexto).findViewById(R.id.img_foto);
 
-                params.put("txt_cd_munic_solic","25300");
-                params.put("txt_cd_bairro_solic","16");
-                params.put("txt_cd_logr_solic","20143");
-                params.put("txt_en_lt_logr_solic","s2");
-                params.put("txt_en_qd_logr_solic","q10");
-                params.put("txt_en_nr_logr_solic","3659");
+        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
 
-                params.put("sel_tp_logr_solicitacao","PCA");
-                params.put("txt_nm_cd_munic_solicitacao","GOIANIA");
-                params.put("txt_nm_cd_bairro_solicitacao","16");
-                params.put("txt_nm_cd_logr_solicitacao","20143");
-                params.put("txt_ds_solicitacao","teste de inclusao");
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(contexto);
-        requestQueue.add(stringRequest);
-
-        return resposta;
-
-    }
-
-    /*public String executa(String urls) throws IOException{
-
-        InputStream is = null;
-
-        URL url = new URL(urls);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        //create a file to write bitmap data
+        File file = new File(contexto.getCacheDir(), "teste");
 
         try {
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            body = writeXml(ListfcAedes);
-            OutputStream output = new BufferedOutputStream(conn.getOutputStream());
-            output.write(body.getBytes());
-            output.flush();
+            file.createNewFile();
 
-            int response = conn.getResponseCode();
-            Log.d(TAG, "executa - O codigo da resposta é: " + response);
 
-            is = conn.getInputStream();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
 
-            body = readIt(is, 500);
+            //write the bytes in file
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
 
-        }finally {
-            conn .disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return "teste";
+        HttpClient httpclient = new DefaultHttpClient();
 
-    }
-
-    private String writeXml(List<FocoAedes> focoAedes){
-        XmlSerializer serializer = Xml.newSerializer();
-        StringWriter writer = new StringWriter();
+        HttpPost httpost = new HttpPost(REGISTER_URL);
+        MultipartEntity entity = new MultipartEntity(
+                HttpMultipartMode.BROWSER_COMPATIBLE);
         try {
-            serializer.setOutput(writer);
-            serializer.startDocument("UTF-8", true);
-            serializer.startTag("", "solicitacao_envio");
-            for (FocoAedes fcAedes: focoAedes){
-                serializer.startTag("", "dados_envio");
-                serializer.startTag("", "dsFocoAedes");
-                serializer.text(fcAedes.getDsFocoAedes());
-                serializer.endTag("", "dsFocoAedes");
-                serializer.endTag("", "dados_envio");
-            }
-            serializer.endTag("", "solicitacao_envio");
-            serializer.endDocument();
-            return writer.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            entity.addPart("myString", new StringBody("STRING_VALUE"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-    }
+        entity.addPart("myImageFile", new FileBody(file));
+        httpost.setEntity(entity);
+        HttpResponse response;
+        try {
 
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);
-    }*/
+            response = httpclient.execute(httpost);
+
+            String responseStr = EntityUtils.toString(response.getEntity());
+
+            Log.d(TAG,"chamaConexao - response: "+responseStr);
+
+            return responseStr;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+
+
+
+    }
 
 }

@@ -38,7 +38,7 @@ public class FocoAedesDB {
 
     }
 
-    public void addFocoAedes(FocoAedes fcAedes) {
+    /*public void addFocoAedes(FocoAedes fcAedes) {
         SQLiteDatabase db = bh.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -77,6 +77,6 @@ public class FocoAedesDB {
         }
 
         return fcAedesArray;
-    }
+    }*/
 
 }
