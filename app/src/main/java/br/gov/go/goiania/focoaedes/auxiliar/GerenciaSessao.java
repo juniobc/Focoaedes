@@ -18,7 +18,9 @@ public class GerenciaSessao {
     int PRIVATE_MODE = 0;
     private static final String PREF_NAME = "UsuarioFocoAedes";
     private static final String IS_LOGIN = "IsLoggedIn";
-    public static final String KEY_NAME = "name";
+    public static final String KEY_CODIGO = "codigo";
+    public static final String KEY_NOME = "nome";
+    public static final String KEY_CPF = "cpf";
     public static final String KEY_EMAIL = "email";
 
     public GerenciaSessao(Context contexto){
@@ -27,10 +29,12 @@ public class GerenciaSessao {
         editor = pref.edit();
     }
 
-    public void criaSessaoLogin(String name, String email){
+    public void criaSessaoLogin(String codigo, String Cpf , String nome, String email){
 
         editor.putBoolean(IS_LOGIN, true);
-        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_CODIGO, codigo);
+        editor.putString(KEY_CPF, Cpf);
+        editor.putString(KEY_NOME, nome);
         editor.putString(KEY_EMAIL, email);
         editor.commit();
 
@@ -49,7 +53,9 @@ public class GerenciaSessao {
 
     public HashMap<String, String> getDadosUsr(){
         HashMap<String, String> user = new HashMap<String, String>();
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
+        user.put(KEY_CODIGO, pref.getString(KEY_CODIGO, null));
+        user.put(KEY_CPF, pref.getString(KEY_CPF, null));
+        user.put(KEY_NOME, pref.getString(KEY_NOME, null));
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         return user;
     }

@@ -1,30 +1,62 @@
 package br.gov.go.goiania.focoaedes;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import br.gov.go.goiania.focoaedes.banco.BancoHelper;
 import br.gov.go.goiania.focoaedes.entidades.Usuario;
 import br.gov.go.goiania.focoaedes.auxiliar.GerenciaSessao;
 import br.gov.go.goiania.focoaedes.banco.UsuarioDB;
+import br.gov.go.goiania.focoaedes.rede.CadastraUsuario;
 
 
 public class Login extends AppCompatActivity {
 
-    private EditText txtNmUsuario, txtDsEmail, txtNrTelefone;
-    private GerenciaSessao sessao;
+    private EditText txtNmUsuario, txtDsEmail, txtNrCpf;
+    public static GerenciaSessao sessao;
     private UsuarioDB usrDB;
+
+    private static final String TAG = "Login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        BancoHelper banco = new BancoHelper(this);
+        SQLiteDatabase database = banco.getWritableDatabase();
+        Log.d(TAG, "onCreate - bd"+database.getVersion());
+
         sessao = new GerenciaSessao(getApplicationContext());
-        this.usrDB = new UsuarioDB(this);
+        usrDB = new UsuarioDB(this);
+
+        verificaUsuario();
+
+    }
+
+    @Override
+    public void onResume(){
+
+        super.onResume();
+
+        verificaUsuario();
+
+    }
+
+
+
+    public void verificaUsuario(){
 
         if(sessao.isLoggedIn()){
 
@@ -32,13 +64,17 @@ public class Login extends AppCompatActivity {
 
         }else{
 
+            Usuario usuario = this.usrDB.getTodosUsuario();
+
             if(this.usrDB.getTodosUsuario() == null){
 
                 txtNmUsuario = (EditText) findViewById(R.id.nm_usuario);
                 txtDsEmail = (EditText) findViewById(R.id.nm_email);
-                txtNrTelefone = (EditText) findViewById(R.id.nr_telefone);
+                txtNrCpf = (EditText) findViewById(R.id.nr_cpf);
 
             }else{
+
+                sessao.criaSessaoLogin(String.valueOf(usuario.getCdUsr()), usuario.getNrCpf(), usuario.getNmUsr(), usuario.getDsEmail());
 
                 acessaHome();
 
@@ -54,11 +90,9 @@ public class Login extends AppCompatActivity {
 
             Usuario usr = new Usuario(txtNmUsuario.getText().toString(),
                     txtDsEmail.getText().toString(),
-                    Long.parseLong(txtNrTelefone.getText().toString()));
+                    txtNrCpf.getText().toString());
 
-            this.usrDB.addUsuario(usr);
-
-            acessaHome();
+            new CadastraUsuario(this, this, usr).execute();
 
         }
 
@@ -76,8 +110,8 @@ public class Login extends AppCompatActivity {
             return false;
         }
 
-        if(txtNrTelefone.getText().toString().equals("")){
-            Toast.makeText(this, "Informe o telefone!", Toast.LENGTH_LONG).show();
+        if(txtNrCpf.getText().toString().equals("")){
+            Toast.makeText(this, "Informe o CPF!", Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -90,6 +124,13 @@ public class Login extends AppCompatActivity {
         Intent i = new Intent(this, Home.class);
         startActivity(i);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        return true;
     }
 
 }

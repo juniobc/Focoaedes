@@ -1,13 +1,11 @@
 package br.gov.go.goiania.focoaedes.rede;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -19,62 +17,43 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
+import br.gov.go.goiania.focoaedes.Login;
+import br.gov.go.goiania.focoaedes.banco.UsuarioDB;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
+import br.gov.go.goiania.focoaedes.entidades.Usuario;
 
 /**
- * Created by m1031007 on 25/02/2016.
+ * Created by sebastiao on 25/02/2016.
  */
-public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
+public class CadastraUsuario extends AsyncTask<Void, Void, String> {
 
-    private static final String TAG = "ConsultaFocoAedes";
+    private static final String TAG = "CadastraUsuario";
 
-    private List<FocoAedes> focoAedes = null;
-    private static final String ns = null;
+    private Login login;
+
     private ProgressDialog pd;
     private Context contexto;
+    private String cdUsuario = null;
+    private Usuario usuario;
+    private static final String ns = null;
 
-    public ConsultaFocoAedes(Context contexto){
+    public CadastraUsuario(Login login, Context contexto, Usuario usuario){
 
         this.contexto = contexto;
+        this.usuario = usuario;
+        this.login = login;
 
     }
+
 
     @Override
-    protected void onPreExecute() {
-        pd = new ProgressDialog(contexto);
-        pd.setMessage("Enviando dados...");
-        pd.show();
-    }
-
-    @Override
-    protected List<FocoAedes> doInBackground(Void... params) {
-        return executa();
-    }
-
-    @Override
-    protected void onPostExecute(List<FocoAedes> result) {
-
-        pd.dismiss();
-
-        //Log.d(TAG, "onPostExecute - result.size(): " + result.size());
-
-        /*for (FocoAedes temp : result) {
-            //Toast.makeText(contexto, temp.getCdFocoAedes(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onPostExecute - temp.getCdFocoAedes(): "+temp.getCdFocoAedes());
-        }*/
-
-    }
-
-    public List<FocoAedes> executa(){
-
+    protected String doInBackground(Void... params) {
         try {
 
-            focoAedes = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f8.asp?nr_cpf_contri=03120401137&cd_servico=190"));
+            cdUsuario = parse(downloadUrl("http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f6.asp?txt_nm_contri="+usuario.getNmUsr().replace(" ","%20")
+            +"&txt_nr_cpf_contri="+usuario.getNrCpf()+"&txt_in_email_contri="+usuario.getDsEmail()));
 
         }catch(IOException e){
 
@@ -84,11 +63,45 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
             e.printStackTrace();
         }
 
-        return focoAedes;
+        return cdUsuario;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        pd = new ProgressDialog(contexto);
+        pd.setMessage("Entrando no sistema...");
+        pd.show();
+}
+
+    @Override
+    protected void onPostExecute(String result) {
+
+        pd.dismiss();
+
+        Log.d(TAG, "onPostExecute - result: " + result);
+
+        UsuarioDB usrDB;
+
+        usrDB = new UsuarioDB(contexto);
+
+        usuario.setCdUsr(Integer.parseInt(result));
+
+        usrDB.addUsuario(usuario);
+
+        login.sessao.criaSessaoLogin(String.valueOf(usuario.getCdUsr()), usuario.getNrCpf(), usuario.getNmUsr(), usuario.getDsEmail());
+
+        login.acessaHome();
+
+        /*for (FocoAedes temp : result) {
+            //Toast.makeText(contexto, temp.getCdFocoAedes(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onPostExecute - temp.getCdFocoAedes(): "+temp.getCdFocoAedes());
+        }*/
 
     }
 
     private InputStream downloadUrl(String urlString) throws IOException {
+
+        Log.d(TAG, "downloadUrl - urlString: "+urlString);
 
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -96,11 +109,13 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
         conn.setConnectTimeout(15000 /* milliseconds */);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
+        // Starts the query
         conn.connect();
+
         return conn.getInputStream();
     }
 
-    public List parse(InputStream in) throws XmlPullParserException, IOException {
+    public String parse(InputStream in) throws XmlPullParserException, IOException {
 
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -130,56 +145,26 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
         }
     }
 
-    public List leXml(XmlPullParser parser) throws XmlPullParserException, IOException{
+    public String leXml(XmlPullParser parser) throws XmlPullParserException, IOException{
 
-        List foco = new ArrayList<>();
+        String cdUsuario = null;
 
         parser.require(XmlPullParser.START_TAG, ns, "dt");
 
         while (parser.next() != XmlPullParser.END_TAG) {
-            Log.d(TAG,"CONTADOS: "+parser.getName());
+
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("solicitacao")) {
-                //foco.add(leFoco(parser));
+            if (name.equals("cd_contri")) {
+                cdUsuario = le(parser, "cd_contri");
             } else {
                 skip(parser);
             }
         }
 
-        return foco;
-    }
-
-    private FocoAedes leFoco(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, ns, "solicitacao");
-        int cdFocoAedes = 0;
-        String dsFocoAedes = null;
-        String status = null;
-
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            String name = parser.getName();
-            switch(name){
-
-                case "cd_sol":
-                    cdFocoAedes = Integer.parseInt(le(parser, "cd_sol"));
-                    break;
-
-                case "status_atual":
-                    status = le(parser, "status_atual");
-                    break;
-
-                case "in_descricao_st":
-                    dsFocoAedes = le(parser, "in_descricao_st");
-                    break;
-
-            }
-        }
-        return new FocoAedes(cdFocoAedes, status,dsFocoAedes);
+        return cdUsuario;
     }
 
     private String le(XmlPullParser parser, String campo) throws IOException, XmlPullParserException {
@@ -213,6 +198,27 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
                     break;
             }
         }
+    }
+
+    private String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
     }
 
 }

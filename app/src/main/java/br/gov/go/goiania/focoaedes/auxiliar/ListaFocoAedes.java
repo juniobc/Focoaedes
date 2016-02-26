@@ -11,6 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -27,6 +29,7 @@ import br.gov.go.goiania.focoaedes.R;
 
 public class ListaFocoAedes extends ArrayAdapter<FocoAedes> {
 
+    private static final String TAG ="ListaFocoAedes";
     Context context;
     private int resource;
     private List<FocoAedes> data = null;
@@ -50,8 +53,14 @@ public class ListaFocoAedes extends ArrayAdapter<FocoAedes> {
         FocoAedes object = data.get(position);
 
         ImageView imgFoco = (ImageView) convertView.findViewById(R.id.img_foto);
+        TextView statusEnvio = (TextView) convertView.findViewById(R.id.status_envio);
+        TextView dsFocoAedes = (TextView) convertView.findViewById(R.id.ds_foco_aedes);
+        TextView cdSolicitacao = (TextView) convertView.findViewById(R.id.cd_solicitacao);
 
-        //imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
+        imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
+        statusEnvio.setText(object.getStatus());
+        dsFocoAedes.setText(object.getDsFocoAedes());
+        cdSolicitacao.setText("SOLICITAÇÃ: "+String.valueOf(object.getCdFocoAedes()));
 
         return convertView;
 

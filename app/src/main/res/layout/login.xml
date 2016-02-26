@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:fitsSystemWindows="true"
+    tools:context="br.gov.go.goiania.focoaedes.Login">
 
-    <EditText
-        android:id="@+id/nm_usuario"
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nm_usuario"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <EditText
-        android:id="@+id/nm_email"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nm_email"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-    <EditText
-        android:id="@+id/nr_telefone"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nr_telefone"/>
+    </android.support.design.widget.AppBarLayout>
 
-    <Button
-        android:id="@+id/btn_entrar"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:text="Entrar"
-        android:onClick="entrar"/>
+    <include layout="@layout/content_login"/>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

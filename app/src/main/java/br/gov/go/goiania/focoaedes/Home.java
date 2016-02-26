@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,14 +21,19 @@ import br.gov.go.goiania.focoaedes.rede.ConsultaFocoAedes;
 
 public class Home extends AppCompatActivity {
 
-    ListaFocoAedes adapter;
-    private FocoAedesDB focoAedesDB;
-    private ListView listFcAedesView;
-    private List<FocoAedes> listaFA;
+    private static final String TAG = "Home";
+
+    private static ListaFocoAedes adapter;
+    private static FocoAedesDB focoAedesDB;
+    private static ListView listFcAedesView;
+    private static List<FocoAedes> listaFA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
+
         setContentView(R.layout.home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -43,15 +49,37 @@ public class Home extends AppCompatActivity {
 
         this.focoAedesDB = new FocoAedesDB(this);
 
-        new ConsultaFocoAedes(this).execute();
+        this.listaFA = buscaFocoAedes();
 
-        //this.listaFA = buscaFocoAedes();
-
-        /*adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
+        adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
 
         listFcAedesView = (ListView) findViewById(R.id.list_foco_aedes);
         if(buscaFocoAedes() != null)
-            listFcAedesView.setAdapter(adapter);*/
+            listFcAedesView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onStart(){
+
+        super.onStart();
+        Log.d(TAG, "onStart");
+
+        if(this.listaFA != null){
+            this.listaFA.clear();
+            this.listaFA.addAll(buscaFocoAedes());
+            adapter.notifyDataSetChanged();
+        }
+
+    }
+
+    public static void atualisaLista(){
+
+        if(listaFA != null){
+            listaFA.clear();
+            listaFA.addAll(focoAedesDB.getTodosFocosAedes());
+            adapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -60,19 +88,21 @@ public class Home extends AppCompatActivity {
 
         super.onResume();
 
-        /*if(this.listaFA != null){
+        Log.d(TAG, "onResume");
+
+        if(this.listaFA != null){
             this.listaFA.clear();
             this.listaFA.addAll(buscaFocoAedes());
             adapter.notifyDataSetChanged();
-        }*/
+        }
 
     }
 
-    /*public List<FocoAedes> buscaFocoAedes(){
+    public List<FocoAedes> buscaFocoAedes(){
 
-        return new ConsultaFocoAedes(this).execute();
+        return this.focoAedesDB.getTodosFocosAedes();
 
-    }*/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

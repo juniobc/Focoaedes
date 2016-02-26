@@ -1,6 +1,8 @@
 package br.gov.go.goiania.focoaedes;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.gov.go.goiania.focoaedes.auxiliar.GerenciaSessao;
 import br.gov.go.goiania.focoaedes.rede.EnviaFoco;
 import br.gov.go.goiania.focoaedes.rede.EnviaFocoAedes;
 
@@ -46,11 +50,23 @@ public class CadastraFoco extends AppCompatActivity{
     private CheckBox chkStLocal8;
     private CheckBox chkStLocal9;
     private Spinner selLoteVago;
+    private EditText dsBairro;
+    private EditText dsLogr;
+    private EditText dsQuadra;
+    private EditText dsLote;
+    private EditText dsNumero;
+    private Spinner selTpLogr;
+
+    private GerenciaSessao sessao;
+
+    private String retorno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cadastra_foco);
+
+        sessao = new GerenciaSessao(getApplicationContext());
 
         viewPager = (ViewPager) findViewById(R.id.pager);
 
@@ -105,8 +121,6 @@ public class CadastraFoco extends AppCompatActivity{
             finish();
         }else if(id == R.id.menu_salvar){
             cadastraFoco();
-            //if(cadastraFoco())
-                //finish();
         }
 
         return true;
@@ -114,9 +128,16 @@ public class CadastraFoco extends AppCompatActivity{
 
     public void iniViewPagerVariaveis(){
 
+        dsBairro = (EditText) viewPager.findViewById(R.id.busca_bairro);
+        dsLogr = (EditText) viewPager.findViewById(R.id.busca_logr);
+        dsQuadra = (EditText) viewPager.findViewById(R.id.nm_qudra);
+        dsLote = (EditText) viewPager.findViewById(R.id.nm_lote);
+        dsNumero = (EditText) viewPager.findViewById(R.id.nm_numero);
+        selTpLogr = (Spinner) viewPager.findViewById(R.id.sel_tp_logr);
+
         dsFocoAedes = (EditText) viewPager.findViewById(R.id.ds_foco_aedes);
         cdBairro = (TextView) viewPager.findViewById(R.id.cd_bairro);
-        cdLogr = (TextView) viewPager.findViewById(R.id.cd_bairro);
+        cdLogr = (TextView) viewPager.findViewById(R.id.cd_logr);
 
         selTpLocal = (Spinner) viewPager.findViewById(R.id.tp_local);
 
@@ -136,13 +157,13 @@ public class CadastraFoco extends AppCompatActivity{
 
     }
 
-    public void cadastraFoco(){
+    public boolean cadastraFoco(){
 
         iniViewPagerVariaveis();
 
         if(consiste()){
 
-            Toast.makeText(CadastraFoco.this, "dsFocoAedes: "+dsFocoAedes.getText().toString(), Toast.LENGTH_SHORT).show();
+            /*Toast.makeText(CadastraFoco.this, "dsFocoAedes: "+dsFocoAedes.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "cdBairro: "+cdBairro.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "cdLogr: "+cdLogr.getText().toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "selTpLocal: "+selTpLocal.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();
@@ -157,41 +178,97 @@ public class CadastraFoco extends AppCompatActivity{
             Toast.makeText(CadastraFoco.this, "chkStLocal8: "+chkStLocal8.isChecked(), Toast.LENGTH_SHORT).show();
             Toast.makeText(CadastraFoco.this, "chkStLocal9: "+chkStLocal9.isChecked(), Toast.LENGTH_SHORT).show();
             if(chkStLocal8.isChecked())
-                Toast.makeText(CadastraFoco.this, "selLoteVago: "+selLoteVago.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CadastraFoco.this, "selLoteVago: "+selLoteVago.getSelectedItemPosition(), Toast.LENGTH_SHORT).show();*/
 
             //new EnviaFocoAedes(this, null).execute();
 
-            /*Map<String, String> params = new HashMap<String,String>();
+            Map<String, String> params = new HashMap<String,String>();
             params.put("opr","abre_solicitacao");
-            params.put("txt_cd_contri","532");
-            params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
+            params.put("txt_cd_contri",sessao.getDadosUsr().get(GerenciaSessao.KEY_CODIGO));
+            params.put("txt_nm_contri",sessao.getDadosUsr().get(GerenciaSessao.KEY_NOME));
             params.put("txt_cd_munic","25300");
-            params.put("txt_nr_cpf_contri","03120401137");
-            params.put("txt_in_email_contri","juniobc@gmail.com");
-            params.put("txt_cd_servico","190");
+            params.put("txt_nr_cpf_contri",sessao.getDadosUsr().get(GerenciaSessao.KEY_CPF));
+            params.put("txt_in_email_contri",sessao.getDadosUsr().get(GerenciaSessao.KEY_EMAIL));
+            params.put("txt_cd_servico","1208");
+            //params.put("txt_cd_servico","190");
 
             params.put("txt_cd_munic_solicitacao","25300");
-            params.put("txt_cd_bairro_solicitacao","105");
-            params.put("txt_cd_logr_solicitacao","20143");
-            params.put("txt_en_lt_logr_solicitacao","456");
-            params.put("txt_en_qd_logr_solicitacao","65");
-            params.put("txt_en_nr_logr_solicitacao","8595");
 
-            params.put("txt_tp_logr_solicitacao","RUA");
+            params.put("txt_cd_bairro_solicitacao",cdBairro.getText().toString());
+            params.put("txt_cd_logr_solicitacao",cdLogr.getText().toString());
+            params.put("txt_en_lt_logr_solicitacao",dsQuadra.getText().toString());
+            params.put("txt_en_qd_logr_solicitacao",dsLote.getText().toString());
+            params.put("txt_en_nr_logr_solicitacao",dsNumero.getText().toString());
+
+            params.put("txt_tp_logr_solicitacao",selTpLogr.getItemAtPosition(selTpLogr.getSelectedItemPosition()).toString());
             params.put("txt_nm__munic_solicitacao","GOIANIA");
-            params.put("txt_nm_bairro_solicitacao","SETOR CRIMEIA OESTE");
-            params.put("txt_nm_logr_solicitacao","DES AIROSA ALVES DE CASTRO");
-            params.put("txt_ds_solicitacao", "teste de inclusao");
+            params.put("txt_nm_bairro_solicitacao",dsBairro.getText().toString());
+            params.put("txt_nm_logr_solicitacao",dsLogr.getText().toString());
+            params.put("txt_ds_solicitacao", dsFocoAedes.getText().toString());
 
-            EnviaFoco envia = new EnviaFoco(this, params);
+            Map<String, String> paramsDesc = new HashMap<String,String>();
+            boolean flagDec = false;
 
-            envia.executa();*/
+            if(chkStLocal1.isChecked()){
+                paramsDesc.put("chkStLocal1",chkStLocal1.getText().toString());
+                flagDec = true;
+            }
 
-            //new EnviaFocoAedes(this).execute();
+            if(chkStLocal2.isChecked()){
+                paramsDesc.put("chkStLocal2",chkStLocal2.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal3.isChecked()){
+                paramsDesc.put("chkStLocal3",chkStLocal3.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal4.isChecked()){
+                paramsDesc.put("chkStLocal4",chkStLocal4.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal5.isChecked()){
+                paramsDesc.put("chkStLocal5",chkStLocal5.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal6.isChecked()){
+                paramsDesc.put("chkStLocal6",chkStLocal6.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal7.isChecked()){
+                paramsDesc.put("chkStLocal7",chkStLocal7.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal8.isChecked()){
+                paramsDesc.put("chkStLocal8",chkStLocal8.getText().toString());
+                flagDec = true;
+            }
+
+            if(chkStLocal9.isChecked()){
+                paramsDesc.put("chkStLocal9",chkStLocal9.getText().toString());
+                flagDec = true;
+            }
+
+            if(!flagDec){
+                paramsDesc = null;
+            }
+
+            EnviaFoco envia = new EnviaFoco(this, params, paramsDesc);
+
+            if(envia.executa() != null) {
+                retorno = envia.executa();
+                return true;
+            }else
+                return false;
 
         }
 
-        //Toast.makeText(CadastraFoco.this, melhorHorario.getText().toString(), Toast.LENGTH_SHORT).show();
+        return false;
 
     }
 
@@ -201,7 +278,8 @@ public class CadastraFoco extends AppCompatActivity{
 
         boolean flagStLocal = true;
         boolean flagLoteVago = false;
-
+        Log.d(TAG, "consiste - cdBairro: " + cdBairro.getText());
+        Log.d(TAG, "consiste - cdLogr: " + cdLogr.getText());
         if(cdBairro.getText().toString().equals("") || cdBairro.getText().toString().equals("0")){
 
             Toast.makeText(CadastraFoco.this, "Informe o bairro!", Toast.LENGTH_LONG).show();
@@ -216,7 +294,7 @@ public class CadastraFoco extends AppCompatActivity{
 
         }
 
-        if(selTpLocal.getSelectedItemPosition() == 0){
+        /*if(selTpLocal.getSelectedItemPosition() == 0){
 
             Toast.makeText(CadastraFoco.this, "Informe o tipo do local!", Toast.LENGTH_LONG).show();
             return false;
@@ -269,7 +347,7 @@ public class CadastraFoco extends AppCompatActivity{
         if(flagStLocal){
             Toast.makeText(CadastraFoco.this, "Informe a situação do local!", Toast.LENGTH_LONG).show();
             return false;
-        }
+        }*/
 
         return true;
 

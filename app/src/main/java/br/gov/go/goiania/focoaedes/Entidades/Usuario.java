@@ -4,17 +4,27 @@ package br.gov.go.goiania.focoaedes.entidades;
 
 public class Usuario {
 
+    private int cdUsr;
     private String nmUsr;
     private String dsEmail;
-    private long nrTel;
+    private String nrCpf;
 
     public Usuario(){}
 
-    public Usuario(String nmUsr, String dsEmail, long nrTel){
+    public Usuario(int cdUsr, String nmUsr, String dsEmail, String nrCpf){
+
+        this.cdUsr = cdUsr;
+        this.nmUsr = nmUsr;
+        this.dsEmail = dsEmail;
+        this.nrCpf = nrCpf;
+
+    }
+
+    public Usuario(String nmUsr, String dsEmail, String nrCpf){
 
         this.nmUsr = nmUsr;
         this.dsEmail = dsEmail;
-        this.nrTel = nrTel;
+        this.nrCpf = nrCpf;
 
     }
 
@@ -34,11 +44,20 @@ public class Usuario {
         this.dsEmail = dsEmail;
     }
 
-    public long getNrTel() {
-        return nrTel;
+    public String getNrCpf() {
+        return nrCpf;
     }
 
-    public void setNrTel(long nrTel) {
-        this.nrTel = nrTel;
+    public void setNrCpf(String nrCpf) {
+        this.nrCpf = nrCpf;
+    }
+
+
+    public int getCdUsr() {
+        return cdUsr;
+    }
+
+    public void setCdUsr(int cdUsr) {
+        this.cdUsr = cdUsr;
     }
 }

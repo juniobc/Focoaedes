@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Foco no Ades</string>
+    <string name="app_name">Goiânia Contra Aedes</string>
     <string name="nm_usuario">Nome</string>
     <string name="nm_email">Email</string>
-    <string name="nr_telefone">Numero do telefone</string>
+    <string name="nr_cpf">Numero do CPF</string>
     <string name="ocorrencia">Ocorrencia</string>
     <string name="tirar_foto">Tirar Foto</string>
     <string name="ds_ambiente"><font size="16">Descreva o Ambiente</font></string>

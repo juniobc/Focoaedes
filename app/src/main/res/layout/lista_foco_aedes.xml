@@ -15,7 +15,7 @@
         android:layout_marginRight="8dp"/>
 
     <TextView
-        android:id="@+id/status_envio"
+        android:id="@+id/cd_solicitacao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/img_foto"
@@ -28,14 +28,14 @@
         android:id="@+id/ds_foco_aedes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/status_envio"
+        android:layout_below="@id/cd_solicitacao"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/img_foto"
         android:textSize="@dimen/rating"
         android:text="Aqui vai a descrição do foco aedes"/>
 
     <TextView
-        android:id="@+id/btn_abrir_solic"
+        android:id="@+id/status_envio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ds_foco_aedes"

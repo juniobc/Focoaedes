@@ -5,12 +5,15 @@ import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
 
 public class BancoHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "BancoHelper";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String DATABASE_NAME = "focoaedes";
 
@@ -27,6 +30,11 @@ public class BancoHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(TAG,"onUpgrade - oldVersion: "+oldVersion);
+        //if (oldVersion < 3) {
+            db.execSQL(FocoAedesDB.DROP_FOCO_AEDES);
+            db.execSQL(FocoAedesDB.CREATE_FOCOAEDES_TABLE);
+        //}
 
     }
 }

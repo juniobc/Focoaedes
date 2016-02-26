@@ -61,9 +61,9 @@ public class ConsultaEndereco{
             String temp = caracteres.toString().replaceAll(" ","%20");
 
             if(tpConsulta == 0)
-                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f3.asp?nm_bairro="+temp));
+                endereco = parse(downloadUrl("http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f3.asp?nm_bairro="+temp));
             else if(tpConsulta == 1)
-                endereco = parse(downloadUrl("http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f4.asp?cd_bairro="+cd_bairro+"&nm_logr="+temp));
+                endereco = parse(downloadUrl("http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f4.asp?cd_bairro="+cd_bairro+"&nm_logr="+temp));
 
         }catch(IOException e){
 

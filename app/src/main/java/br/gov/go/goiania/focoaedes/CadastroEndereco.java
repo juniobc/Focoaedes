@@ -75,10 +75,28 @@ public class CadastroEndereco extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                if (!buscaBairro.isSelectionFromPopUp()) {
+                /*if (!buscaBairro.isSelectionFromPopUp()) {
                     buscaBairro.setText("");
                     txtCdBairro.setText("");
                     buscaLogr.setText("");
+                }*/
+                Log.d(TAG, "onFocusChange - txtCdBairro: " + txtCdBairro.getText().toString());
+                if ((txtCdBairro.getText().toString().equals("0") || txtCdBairro.getText().toString().equals("")) && buscaBairro.hasFocus()) {
+
+                    buscaBairro.setText("");
+                    buscaLogr.setText("");
+                    txtCdLogr.setText("");
+
+                    if (!buscaBairro.getText().toString().equals(""))
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Bairro não encontrado!")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                                .show();
+
                 }
             }
         });
@@ -86,57 +104,23 @@ public class CadastroEndereco extends Fragment {
         this.buscaBairro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+
                 int cdBairro;
 
                 Endereco endereco = (Endereco) parent.getAdapter().getItem(position);
                 buscaBairro.setText(endereco.getNmBairro());
                 txtCdBairro.setText(String.valueOf(endereco.getCdBairro()));
-                buscaLogr.setEnabled(true);
 
-                if(!txtCdBairro.getText().toString().equals("")){
+                if (!txtCdBairro.getText().toString().equals("")) {
                     cdBairro = Integer.parseInt(txtCdBairro.getText().toString());
-                }else{
+                } else {
                     cdBairro = 0;
                 }
 
-                BuscaEnderecoAdapter adapterLogr = new BuscaEnderecoAdapter(getActivity(),1,cdBairro);
+                BuscaEnderecoAdapter adapterLogr = new BuscaEnderecoAdapter(getActivity(), 1, cdBairro);
 
                 buscaLogr.setAdapter(adapterLogr);
 
-            }
-        });
-
-        /*this.buscaLogr.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (txtCdBairro.getText().toString().equals("") || txtCdBairro.getText().toString().equals("0")) {
-
-                    buscaLogr.setEnabled(false);
-
-                    new AlertDialog.Builder(getActivity())
-                        .setMessage("Informe o bairro!")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        })
-                        .show();
-
-                } else {
-                    buscaLogr.setEnabled(true);
-                }
-
-                return true;
-            }
-        });*/
-
-        this.buscaLogr.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!buscaLogr.isSelectionFromPopUp()) {
-                    buscaLogr.setText("");
-                }
             }
         });
 
@@ -148,6 +132,71 @@ public class CadastroEndereco extends Fragment {
                 buscaLogr.setText(endereco.getNmLogr());
                 txtCdLogr.setText(String.valueOf(endereco.getCdLogr()));
 
+            }
+        });
+
+        this.buscaBairro.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                txtCdBairro.setText("");
+                buscaLogr.setText("");
+                txtCdLogr.setText("");
+
+                return false;
+            }
+        });
+
+        /*this.buscaLogr.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG, "buscaLogr.setOnTouchListener - txtCdBairro: " + txtCdBairro.getText().toString());
+                Log.d(TAG, "buscaLogr.setOnTouchListener - txtCdLogr: " + txtCdLogr.getText().toString());
+                if (txtCdBairro.getText().toString().equals("") || txtCdBairro.getText().toString().equals("0")) {
+
+                    if (buscaLogr.hasFocus()) {
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Informe o bairro!")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                }).show();
+
+                        buscaLogr.setText("");
+                        txtCdLogr.setText("");
+
+                    }
+
+                }
+
+                return false;
+            }
+        });*/
+
+        this.buscaLogr.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                /*if (!buscaLogr.isSelectionFromPopUp()) {
+                    buscaLogr.setText("");
+                }*/
+
+                if (txtCdLogr.getText().toString().equals("0") || txtCdLogr.getText().toString().equals("")) {
+
+                    buscaLogr.setText("");
+                    txtCdLogr.setText("");
+
+                    if (!buscaLogr.getText().toString().equals(""))
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Logradouro não encontrado!")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                                .show();
+
+                }
             }
         });
 

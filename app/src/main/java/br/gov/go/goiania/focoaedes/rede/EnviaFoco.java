@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -11,12 +12,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,7 +30,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.gov.go.goiania.focoaedes.Home;
 import br.gov.go.goiania.focoaedes.R;
+import br.gov.go.goiania.focoaedes.auxiliar.DbBitmapUtility;
+import br.gov.go.goiania.focoaedes.banco.FocoAedesDB;
+import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
+import br.gov.go.goiania.focoaedes.xml.RetornoCadFoco;
 
 public class EnviaFoco {
 
@@ -34,58 +43,75 @@ public class EnviaFoco {
 
     private ProgressDialog pd;
 
-    private static final String REGISTER_URL = "http://webdesv.goiania.go.gov.br/sistemas/sa156/asp/sa15600004a0.asp";
-    //private static final String REGISTER_URL = "http://intradesv.goiania.go.gov.br/sistemas/sismp/asp/sismp22222f0.asp";
+    private FocoAedesDB focoAedesDB;
+
+    private static FocoAedes fcAedes;
+
+    private static Bitmap bitmap;
+
+    private static final String REGISTER_URL = "http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004a0.asp";
     private Context contexto;
     private Map<String,String> params;
+    private Map<String,String> paramsDesc;
 
-    public EnviaFoco(Context contexto, Map<String,String> params){
+    private static String retorno = null;
+
+    public EnviaFoco(Context contexto, Map<String,String> params, Map<String,String> paramsDesc){
 
         this.contexto = contexto;
         this.params = params;
+        this.focoAedesDB = new FocoAedesDB(contexto);
+        this.paramsDesc = paramsDesc;
 
     }
 
-    public void executa(){
+    public String executa(){
 
-        Map<String,String> params = new HashMap<String, String>();
-        params.put("opr","abre_solicitacao");
-        params.put("txt_cd_contri","532");
-        params.put("txt_nm_contri","SEBASTIAO JUNIO MENEZES CAMPOS");
-        params.put("txt_cd_munic","25300");
-        params.put("txt_nr_cpf_contri","03120401137");
-        params.put("txt_in_email_contri","juniobc@gmail.com");
-        params.put("txt_cd_servico","190");
+        String descricao = "";
 
-        params.put("txt_cd_munic_solicitacao","25300");
-        params.put("txt_cd_bairro_solicitacao","105");
-        params.put("txt_cd_logr_solicitacao","20143");
-        params.put("txt_en_lt_logr_solicitacao","456");
-        params.put("txt_en_qd_logr_solicitacao","65");
-        params.put("txt_en_nr_logr_solicitacao","8595");
+        if(paramsDesc != null){
 
-        params.put("txt_tp_logr_solicitacao","RUA");
-        params.put("txt_nm__munic_solicitacao","GOIANIA");
-        params.put("txt_nm_bairro_solicitacao","SETOR CRIMEIA OESTE");
-        params.put("txt_nm_logr_solicitacao","DES AIROSA ALVES DE CASTRO");
-        params.put("txt_ds_solicitacao", "teste de inclusao");
+            int contador = 1;
+            for (Map.Entry<String, String> entry : paramsDesc.entrySet()) {
+
+                Log.d(TAG, "executa - entry.getValue()"+entry.getValue());
+
+                descricao += entry.getValue();
+
+                contador ++;
+
+                if(contador <= paramsDesc.size()){descricao+=", ";}
+
+
+            }
+
+            params.put("txt_ds_solicitacao", params.get("txt_ds_solicitacao") + " " + descricao);
+        }
+
+
+
+        if(descricao.equals(""))
+            fcAedes = new FocoAedes(0,params.get("txt_ds_solicitacao"),"PENDENTE ENVIO");
+        else
+            fcAedes = new FocoAedes(0,descricao,"PENDENTE ENVIO");
 
         ImageView image = (ImageView) ((Activity) contexto).findViewById(R.id.img_foto);
 
-        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
 
-        //create a file to write bitmap data
-        File file = new File(contexto.getCacheDir(), "teste");
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+
+        File file = new File(contexto.getCacheDir(), "foto.png");
 
         try {
+
             file.createNewFile();
 
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            resized.compress(Bitmap.CompressFormat.PNG, 0, bos);
             byte[] bitmapdata = bos.toByteArray();
 
-            //write the bytes in file
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(bitmapdata);
             fos.flush();
@@ -100,9 +126,10 @@ public class EnviaFoco {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pd.dismiss();
+                Log.d(TAG, "onResponse: " + error.toString());
+                retorno = null;
                 new AlertDialog.Builder(contexto)
-                        .setTitle("Resposta")
-                        .setMessage(error.toString())
+                        .setMessage("Ocorreu um erro no envio! Tente novamente.")
                         .show();
             }
         },new Response.Listener<String>() {
@@ -110,41 +137,63 @@ public class EnviaFoco {
             @Override
             public void onResponse(String response) {
                 pd.dismiss();
-                Log.d(TAG, "onResponse: " + response);
+
+                try {
+                    retorno = new RetornoCadFoco().executa(response);
+                } catch (XmlPullParserException e) {
+                    Log.d(TAG,"Response.Listener - XmlPullParserException: "+e.toString());
+                    new AlertDialog.Builder(contexto)
+                    .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ((Activity) contexto).finish();
+                        }
+                    })
+                    .show();
+                } catch (IOException e) {
+                    Log.d(TAG,"Response.Listener - XmlPullParserException: "+e.toString());
+                    new AlertDialog.Builder(contexto)
+                            .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    ((Activity) contexto).finish();
+                                }
+                            })
+                            .show();
+                }
+
+                if(retorno == null){
+                    Log.d(TAG,"Response.Listener - retorno == null");
+                    new AlertDialog.Builder(contexto)
+                            .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    ((Activity) contexto).finish();
+                                }
+                            })
+                            .show();
+                }
+
                 new AlertDialog.Builder(contexto)
-                        .setTitle("Resposta")
-                        .setMessage(response)
+                        .setMessage("Solicitação Nº "+retorno
+                                +" incluida com sucesso! A Prefeitura de Goiânia agradece o seu contato.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            fcAedes.setCdFocoAedes(Integer.parseInt(retorno));
+                            fcAedes.setStatus("ABERTA");
+                            fcAedes.setImgLocal(DbBitmapUtility.getBytes(bitmap));
+
+                            focoAedesDB.addFocoAedes(fcAedes);
+
+                            new Home().atualisaLista();
+
+                            ((Activity) contexto).finish();
+                            }
+                        })
                         .show();
             }
         },file, params);
-
-        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        pd.dismiss();
-                        Log.d(TAG, "onResponse: " + response);
-                        new AlertDialog.Builder(contexto)
-                                .setTitle("Resposta")
-                                .setMessage(response)
-                                .show();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "response: erro");
-            }
-        }){
-            @Override
-            public Map<String,String> getParams(){
-
-                Map<String,String> params = new HashMap<String,String>();
-
-                params.put("opr","oprsadfsdf");
-
-                return params;
-            }
-        };*/
 
         pd = new ProgressDialog(contexto);
 
@@ -153,7 +202,11 @@ public class EnviaFoco {
 
         RequestQueue requestQueue = Volley.newRequestQueue(contexto);
 
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         requestQueue.add(stringRequest);
+
+        return retorno;
 
     }
 

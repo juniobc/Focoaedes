@@ -21,16 +21,20 @@ public class FocoAedesDB {
 
     private static final String TABLE_FOCO_AEDES = "t0002";
 
+
     private static final String KEY_ID = "cd_foco_aedes";
     private static final String KEY_DS_FOCO_AEDES = "ds_foco_aedes";
-    private static final String KEY_NR_LAT = "nr_lat";
-    private static final String KEY_NR_LONG = "nr_long";
+    private static final String KEY_STATUS = "status_foco_aedes";
+    private static final String KEY_IMG_URL = "img_url";
     private static final String KEY_IMG_LOCAL = "img_local";
+    private static final String KEY_END = "end_foco_aedes";
     private static final String KEY_DT_CAD = "dt_cad";
 
     protected static final String CREATE_FOCOAEDES_TABLE = "CREATE TABLE " + TABLE_FOCO_AEDES + "("
-            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DS_FOCO_AEDES + " TEXT," + KEY_NR_LAT + " TEXT,"
-            + KEY_NR_LONG + " TEXT," + KEY_IMG_LOCAL + " BLOB, "+KEY_DT_CAD+" INTEGER)";
+            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DS_FOCO_AEDES+ " TEXT," + KEY_STATUS +" TEXT," + KEY_IMG_URL + " TEXT,"
+            +KEY_END +" TEXT,"+ KEY_IMG_LOCAL + " BLOB,"+KEY_DT_CAD+" INTEGER)";
+
+    protected static final String DROP_FOCO_AEDES = "DROP TABLE IF EXISTS "+TABLE_FOCO_AEDES;
 
     public FocoAedesDB(Context contexto){
 
@@ -38,13 +42,27 @@ public class FocoAedesDB {
 
     }
 
-    /*public void addFocoAedes(FocoAedes fcAedes) {
+    public void addFocoAedes(FocoAedes fcAedes) {
         SQLiteDatabase db = bh.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_DS_FOCO_AEDES, fcAedes.getDsFocoAedes().toUpperCase());
-        values.put(KEY_NR_LAT, fcAedes.getNrLat());
-        values.put(KEY_NR_LONG, fcAedes.getNrLong());
+        values.put(KEY_ID, fcAedes.getCdFocoAedes());
+        if(fcAedes.getDsFocoAedes() != null)
+            values.put(KEY_DS_FOCO_AEDES, fcAedes.getDsFocoAedes().toUpperCase());
+        else
+            values.putNull(KEY_DS_FOCO_AEDES);
+        if(fcAedes.getStatus() != null)
+            values.put(KEY_STATUS, fcAedes.getStatus().toUpperCase());
+        else
+            values.putNull(KEY_STATUS);
+        if(fcAedes.getUrlImg() != null)
+            values.put(KEY_IMG_URL, fcAedes.getUrlImg().toUpperCase());
+        else
+            values.putNull(KEY_IMG_URL);
+        if(fcAedes.getEndereco() != null)
+            values.put(KEY_END, fcAedes.getEndereco().toUpperCase());
+        else
+            values.putNull(KEY_END);
         values.put(KEY_IMG_LOCAL, fcAedes.getImgLocal());
         values.put(KEY_DT_CAD, System.currentTimeMillis());
 
@@ -57,7 +75,7 @@ public class FocoAedesDB {
         List<FocoAedes> fcAedesArray = new ArrayList<FocoAedes>();
         FocoAedes fcAedes;
 
-        String selectQuery = "SELECT "+KEY_ID+", "+KEY_DS_FOCO_AEDES+", "+KEY_NR_LAT+", "+KEY_NR_LONG+", "+KEY_DT_CAD+", "+KEY_IMG_LOCAL
+        String selectQuery = "SELECT "+KEY_ID+", "+KEY_DS_FOCO_AEDES+", "+KEY_STATUS+", "+KEY_IMG_URL+", "+KEY_END+", "+KEY_IMG_LOCAL
                 +" FROM " + TABLE_FOCO_AEDES;
 
         SQLiteDatabase db = bh.getWritableDatabase();
@@ -65,9 +83,9 @@ public class FocoAedesDB {
 
         if (cursor.moveToFirst()) {
             do {
-                fcAedes = new FocoAedes(cursor.getString(cursor.getColumnIndex(KEY_DS_FOCO_AEDES)),
-                        cursor.getString(cursor.getColumnIndex(KEY_NR_LAT)),
-                        cursor.getString(cursor.getColumnIndex(KEY_NR_LONG)),
+                fcAedes = new FocoAedes(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                        cursor.getString(cursor.getColumnIndex(KEY_DS_FOCO_AEDES)),
+                        cursor.getString(cursor.getColumnIndex(KEY_STATUS)),
                         cursor.getBlob(cursor.getColumnIndex(KEY_IMG_LOCAL)));
 
                 fcAedesArray.add(fcAedes);
@@ -77,6 +95,6 @@ public class FocoAedesDB {
         }
 
         return fcAedesArray;
-    }*/
+    }
 
 }
