@@ -7,6 +7,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class RetornoCadFoco extends TrataXml {
 
     public String executa(String xml) throws IOException, XmlPullParserException {
 
-        if(leXml(parse(xml)) != null)
-            return leXml(parse(xml)).get(0).toString();
+        if(leXml(parseString(xml)) != null)
+            return leXml(parseString(xml)).get(0).toString();
         else
             return null;
     }

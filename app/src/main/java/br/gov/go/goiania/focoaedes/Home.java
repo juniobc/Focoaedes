@@ -116,10 +116,12 @@ public class Home extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        /*noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_load) {
+            new ConsultaFocoAedes(this).execute();
             return true;
-        }*/
+        }
+
+
 
         return super.onOptionsItemSelected(item);
     }

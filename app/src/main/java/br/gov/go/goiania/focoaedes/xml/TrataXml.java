@@ -7,6 +7,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 
@@ -14,7 +15,24 @@ public abstract class TrataXml {
 
     private static final String ns = null;
 
-    public XmlPullParser parse(String xml) throws XmlPullParserException, IOException {
+    public XmlPullParser parseInputStream(InputStream in) throws XmlPullParserException, IOException {
+
+        try {
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in, null);
+            parser.nextTag();
+            if (verificaErro(parser))
+                return null;
+            else
+                return parser;
+        } finally {
+            in.close();
+        }
+
+    }
+
+    public XmlPullParser parseString(String xml) throws XmlPullParserException, IOException {
 
         XmlPullParser parser = Xml.newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);

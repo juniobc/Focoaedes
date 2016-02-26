@@ -1,21 +1,26 @@
 package br.gov.go.goiania.focoaedes.xml;
 
 
+import android.util.Log;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
 
 public class ListaFocoAedes extends TrataXml {
 
+    private static final String TAG = "ListaFocoAedes";
+
     private static final String ns = null;
 
-    public List<FocoAedes> executa(String xml) throws IOException, XmlPullParserException {
+    public List<FocoAedes> executa(InputStream in) throws IOException, XmlPullParserException {
 
-        return leXml(parse(xml));
+        return leXml(parseInputStream(in));
     }
 
 
@@ -51,6 +56,7 @@ public class ListaFocoAedes extends TrataXml {
         parser.require(XmlPullParser.START_TAG, ns, tag);
 
         while (parser.next() != XmlPullParser.END_TAG) {
+
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
@@ -88,10 +94,10 @@ public class ListaFocoAedes extends TrataXml {
 
                 default:
                     skip(parser);
-                    break;
-
             }
         }
+
+        Log.d(TAG, "leFoco getCdFocoAedes: "+fc.getCdFocoAedes());
 
         return fc;
 
