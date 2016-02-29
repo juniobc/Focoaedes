@@ -57,7 +57,7 @@ public class ListaFocoAedes extends ArrayAdapter<FocoAedes> {
         TextView dsFocoAedes = (TextView) convertView.findViewById(R.id.ds_foco_aedes);
         TextView cdSolicitacao = (TextView) convertView.findViewById(R.id.cd_solicitacao);
 
-        imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
+        //imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
         statusEnvio.setText(object.getStatus());
         dsFocoAedes.setText(object.getDsFocoAedes());
         cdSolicitacao.setText("SOLICITAÇÃ: "+String.valueOf(object.getCdFocoAedes()));

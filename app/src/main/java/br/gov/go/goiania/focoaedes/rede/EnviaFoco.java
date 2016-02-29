@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import br.gov.go.goiania.focoaedes.Home;
 import br.gov.go.goiania.focoaedes.R;
@@ -186,7 +187,13 @@ public class EnviaFoco {
 
                             focoAedesDB.addFocoAedes(fcAedes);
 
-                            new Home().atualisaLista();
+                            try {
+                                new Home().atualisaLista(contexto);
+                            } catch (ExecutionException e) {
+                                Toast.makeText(contexto, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
+                            } catch (InterruptedException e) {
+                                Toast.makeText(contexto, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
+                            }
 
                             ((Activity) contexto).finish();
                             }

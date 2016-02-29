@@ -12,7 +12,8 @@
         android:layout_height="80dp"
         android:layout_weight="1"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginRight="8dp"
+        android:src="@"/>
 
     <TextView
         android:id="@+id/cd_solicitacao"

@@ -1,6 +1,7 @@
 package br.gov.go.goiania.focoaedes.xml;
 
 
+import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -12,6 +13,8 @@ import java.io.StringReader;
 import java.util.List;
 
 public class RetornoCadFoco extends TrataXml {
+
+    private static final String TAG = "RetornoCadFoco";
 
     private static final String ns = null;
 

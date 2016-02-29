@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
@@ -16,34 +17,38 @@ public class ListaFocoAedes extends TrataXml {
 
     private static final String TAG = "ListaFocoAedes";
 
-    private static final String ns = null;
-
     public List<FocoAedes> executa(InputStream in) throws IOException, XmlPullParserException {
 
         return leXml(parseInputStream(in));
     }
 
+    private static final String ns = null;
 
     @Override
     protected List<FocoAedes> leXml(XmlPullParser parser) throws XmlPullParserException, IOException {
 
-        if (verificaErro(parser))
-            return null;
+        List<FocoAedes> retorno = new ArrayList<FocoAedes>();
 
-        List<FocoAedes> retorno = null;
+        int count = 0;
 
         parser.require(XmlPullParser.START_TAG, ns, "dt");
 
-        while (parser.next() != XmlPullParser.END_TAG) {
+        while (count < 10) {
+            parser.next();
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
+            Log.d(TAG, "leXml - parser.getName(3): "+parser.getName());
             String name = parser.getName();
             if (name.equals("solicitacao")) {
                 retorno.add(leFoco(parser, "solicitacao"));
             } else {
                 skip(parser);
             }
+
+            count++;
+
+            Log.d(TAG, "leXml - count: "+count);
         }
 
         return retorno;
