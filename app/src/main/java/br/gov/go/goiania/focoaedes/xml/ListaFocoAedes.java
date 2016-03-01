@@ -34,16 +34,19 @@ public class ListaFocoAedes extends TrataXml {
         parser.require(XmlPullParser.START_TAG, ns, "dt");
 
         while (count < 10) {
-            parser.next();
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            Log.d(TAG, "leXml - parser.getName(3): "+parser.getName());
-            String name = parser.getName();
-            if (name.equals("solicitacao")) {
-                retorno.add(leFoco(parser, "solicitacao"));
-            } else {
-                skip(parser);
+            if(parser.next() != XmlPullParser.END_TAG){
+                parser.next();
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+                Log.d(TAG, "leXml - parser.getName(3): "+parser.getName());
+                String name = parser.getName();
+                if (name.equals("solicitacao")) {
+                    retorno.add(leFoco(parser, "solicitacao"));
+                } else {
+                    skip(parser);
+                }
+
             }
 
             count++;

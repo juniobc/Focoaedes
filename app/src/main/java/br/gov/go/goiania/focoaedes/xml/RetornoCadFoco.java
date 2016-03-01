@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RetornoCadFoco extends TrataXml {
@@ -22,16 +23,18 @@ public class RetornoCadFoco extends TrataXml {
 
     public String executa(String xml) throws IOException, XmlPullParserException {
 
-        if(leXml(parseString(xml)) != null)
+        String verificaXml = verificaErroString(parseString(xml));
+
+        if(verificaXml == null)
             return leXml(parseString(xml)).get(0).toString();
         else
-            return null;
+            return verificaXml;
     }
 
     @Override
     public List<String> leXml(XmlPullParser parser) throws XmlPullParserException, IOException{
 
-        List<String> retorno = null;
+        List<String> retorno = new ArrayList<String>();
 
         parser.require(XmlPullParser.START_TAG, ns, "dt");
 
@@ -40,8 +43,8 @@ public class RetornoCadFoco extends TrataXml {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("nr")) {
-                retorno.set(0,le(parser,"nr"));
+            if (name.equals("ds")) {
+                retorno.set(0,le(parser,"ds"));
             } else {
                 skip(parser);
             }

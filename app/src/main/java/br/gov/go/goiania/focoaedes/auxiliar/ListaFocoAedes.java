@@ -11,11 +11,16 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -52,13 +57,37 @@ public class ListaFocoAedes extends ArrayAdapter<FocoAedes> {
 
         FocoAedes object = data.get(position);
 
-        ImageView imgFoco = (ImageView) convertView.findViewById(R.id.img_foto);
+        FrameLayout imgFoco = (FrameLayout) convertView.findViewById(R.id.img_foto);
         TextView statusEnvio = (TextView) convertView.findViewById(R.id.status_envio);
         TextView dsFocoAedes = (TextView) convertView.findViewById(R.id.ds_foco_aedes);
         TextView cdSolicitacao = (TextView) convertView.findViewById(R.id.cd_solicitacao);
 
         //imgFoco.setImageBitmap(getCroppedBitmap(DbBitmapUtility.getImage(object.getImgLocal()),100));
-        statusEnvio.setText(object.getStatus());
+        Drawable background = imgFoco.getBackground();
+
+        if (background instanceof ShapeDrawable) {
+            // cast to 'ShapeDrawable'
+            ShapeDrawable shapeDackground = (ShapeDrawable)background;
+
+            if(object.getStatus().equals("FECHADA"))
+                shapeDackground.getPaint().setColor(ContextCompat.getColor(context, R.color.st_fechada));
+            else
+                shapeDackground.getPaint().setColor(ContextCompat.getColor(context, R.color.st_aberto));
+
+        } else if (background instanceof GradientDrawable) {
+
+            GradientDrawable gradientDrawable = (GradientDrawable)background;
+
+            if(object.getStatus().equals("FECHADA"))
+                gradientDrawable.setColor(ContextCompat.getColor(context, R.color.st_fechada));
+            else
+                gradientDrawable.setColor(ContextCompat.getColor(context, R.color.st_aberto));
+        }
+
+
+
+        //statusEnvio.setText(object.getStatus());
+        statusEnvio.setText("há 1 dia");
         dsFocoAedes.setText(object.getDsFocoAedes());
         cdSolicitacao.setText("SOLICITAÇÃ: "+String.valueOf(object.getCdFocoAedes()));
 

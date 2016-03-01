@@ -31,7 +31,7 @@ public class Home extends AppCompatActivity {
     private static ListaFocoAedes adapter;
     private static FocoAedesDB focoAedesDB;
     private static ListView listFcAedesView;
-    private static List<FocoAedes> listaFA;
+    private static List<FocoAedes> listaFA = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +48,16 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(Home.this, CadastraFoco.class);
-                startActivity(i);
+                startActivityForResult(i, 0);
             }
         });
 
-        this.focoAedesDB = new FocoAedesDB(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        buscaFocoAedes();
 
     }
 
@@ -62,32 +67,7 @@ public class Home extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart");
 
-        this.listaFA = buscaFocoAedes();
-
-        adapter = new ListaFocoAedes(this,R.layout.lista_foco_aedes, listaFA);
-        listFcAedesView = (ListView) findViewById(R.id.list_foco_aedes);
-
-        if(this.listaFA != null){
-
-            listFcAedesView.setAdapter(adapter);
-
-        }
-
-        /*if(this.listaFA != null){
-            this.listaFA.clear();
-            this.listaFA.addAll(buscaFocoAedes());
-            adapter.notifyDataSetChanged();
-        }*/
-
-    }
-
-    public static void atualisaLista(Context contexto) throws ExecutionException, InterruptedException {
-
-        if(listaFA != null){
-            listaFA.clear();
-            listaFA.addAll(new ConsultaFocoAedes(contexto).execute().get());
-            adapter.notifyDataSetChanged();
-        }
+        buscaFocoAedes();
 
     }
 
@@ -98,24 +78,25 @@ public class Home extends AppCompatActivity {
 
         Log.d(TAG, "onResume");
 
-        if(this.listaFA != null){
+        /*if(this.listaFA != null){
             this.listaFA.clear();
             this.listaFA.addAll(buscaFocoAedes());
             adapter.notifyDataSetChanged();
-        }
+        }*/
 
     }
 
-    public List<FocoAedes> buscaFocoAedes(){
+    public void buscaFocoAedes(){
 
         try {
-            return new ConsultaFocoAedes(this).execute().get();
+            new ConsultaFocoAedes(this).execute().get();
+            //return new ConsultaFocoAedes(this).execute().get();
         } catch (InterruptedException e) {
             Toast.makeText(this, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
-            return null;
+            //return null;
         } catch (ExecutionException e) {
             Toast.makeText(this, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
-            return null;
+            //return null;
         }
 
         //return this.focoAedesDB.getTodosFocosAedes();
@@ -135,14 +116,7 @@ public class Home extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_load) {
-            if(this.listaFA != null){
-                this.listaFA.clear();
-                this.listaFA.addAll(buscaFocoAedes());
-                adapter.notifyDataSetChanged();
-            }else{
-                this.listaFA = buscaFocoAedes();
-                adapter.notifyDataSetChanged();
-            }
+            buscaFocoAedes();
             return true;
         }
 

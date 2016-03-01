@@ -78,6 +78,42 @@ public abstract class TrataXml {
         }
     }
 
+    public String verificaErroString(XmlPullParser parser) throws IOException{
+
+        try{
+
+            Log.d(TAG, "verificaErroString");
+
+            String retorno = "Ocorreu um erro no cadastro da solicitação!";
+
+            parser.require(XmlPullParser.START_TAG, ns, "msg");
+
+            while (parser.next() != XmlPullParser.END_TAG) {
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+                Log.d(TAG,"verificaErroString - parser.getName()"+parser.getName());
+                String name = parser.getName();
+                if (name.equals("ds")) {
+                    retorno = le(parser,"ds");
+                } else {
+                    skip(parser);
+                }
+            }
+
+            return retorno;
+
+        }catch(XmlPullParserException e){
+
+            e.printStackTrace();
+
+            Log.d(TAG, "XmlPullParserException - e: " + e.toString());
+
+            return null;
+
+        }
+    }
+
     protected String le(XmlPullParser parser, String campo) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, campo);
         String campoR = readText(parser);

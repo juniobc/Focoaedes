@@ -16,4 +16,7 @@
     <color name="list_row_hover_end_color">#ebeef0</color>
     <color name="verde">#177342</color>
 
+    <color name="st_aberto">#F44336</color>
+    <color name="st_fechada">#4CAF50</color>
+
 </resources>

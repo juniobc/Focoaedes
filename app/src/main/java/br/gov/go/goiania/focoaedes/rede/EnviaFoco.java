@@ -142,63 +142,33 @@ public class EnviaFoco {
                 try {
                     retorno = new RetornoCadFoco().executa(response);
                 } catch (XmlPullParserException e) {
-                    Log.d(TAG,"Response.Listener - XmlPullParserException: "+e.toString());
-                    new AlertDialog.Builder(contexto)
-                    .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ((Activity) contexto).finish();
-                        }
-                    })
-                    .show();
+                    Log.d(TAG, "Response.Listener - XmlPullParserException: " + e.toString());
+
+                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
+
                 } catch (IOException e) {
-                    Log.d(TAG,"Response.Listener - XmlPullParserException: "+e.toString());
-                    new AlertDialog.Builder(contexto)
-                            .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    ((Activity) contexto).finish();
-                                }
-                            })
-                            .show();
+                    Log.d(TAG, "Response.Listener - XmlPullParserException: " + e.toString());
+
+                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
                 }
 
                 if(retorno == null){
-                    Log.d(TAG,"Response.Listener - retorno == null");
-                    new AlertDialog.Builder(contexto)
-                            .setMessage("Solicitação incluida! Não foi possivel obter o numero da solicitação.")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    ((Activity) contexto).finish();
-                                }
-                            })
-                            .show();
+                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
+
                 }
 
                 new AlertDialog.Builder(contexto)
-                        .setMessage("Solicitação Nº "+retorno
-                                +" incluida com sucesso! A Prefeitura de Goiânia agradece o seu contato.")
+                        .setMessage(retorno)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                            fcAedes.setCdFocoAedes(Integer.parseInt(retorno));
-                            fcAedes.setStatus("ABERTA");
-                            fcAedes.setImgLocal(DbBitmapUtility.getBytes(bitmap));
+                                ((Activity) contexto).setResult(((Activity)contexto).RESULT_OK);
 
-                            focoAedesDB.addFocoAedes(fcAedes);
+                        ((Activity) contexto).finish();
+                    }
+                })
+                .show();
 
-                            try {
-                                new Home().atualisaLista(contexto);
-                            } catch (ExecutionException e) {
-                                Toast.makeText(contexto, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
-                            } catch (InterruptedException e) {
-                                Toast.makeText(contexto, "Não foi possivel consultar as solicitações!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            ((Activity) contexto).finish();
-                            }
-                        })
-                        .show();
             }
         },file, params);
 

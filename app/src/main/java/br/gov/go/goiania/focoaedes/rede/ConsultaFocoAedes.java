@@ -1,9 +1,12 @@
 package br.gov.go.goiania.focoaedes.rede;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Adapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -26,8 +29,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import br.gov.go.goiania.focoaedes.R;
+import br.gov.go.goiania.focoaedes.auxiliar.GerenciaSessao;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
-import br.gov.go.goiania.focoaedes.xml.ListaFocoAedes;
+import br.gov.go.goiania.focoaedes.auxiliar.ListaFocoAedes;
 
 
 public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
@@ -38,15 +43,22 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
     private ProgressDialog pd;
     private Context contexto;
     private String msg_erro;
+    private ListView listFcAedesView;
+    private ListaFocoAedes adapter;
+
+    private GerenciaSessao sessao;
 
     public ConsultaFocoAedes(Context contexto){
 
         this.contexto = contexto;
 
+        sessao = new GerenciaSessao(((Activity)contexto).getApplicationContext());
+
     }
 
     @Override
     protected void onPreExecute() {
+        Log.d(TAG, "onPreExecute");
         pd = new ProgressDialog(contexto);
         pd.setMessage("Consultando solicitações...");
         pd.show();
@@ -57,10 +69,10 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
 
         try {
 
-            ListaFocoAedes retorno = new ListaFocoAedes();
+            br.gov.go.goiania.focoaedes.xml.ListaFocoAedes retorno = new br.gov.go.goiania.focoaedes.xml.ListaFocoAedes();
 
             focoAedes = retorno.executa(downloadUrl(
-                    "http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f8.asp?nr_cpf_contri=03120401137&cd_servico=1208"));
+                    "http://www.goiania.go.gov.br/sistemas/sa156/asp/sa15600004f8.asp?nr_cpf_contri="+sessao.getDadosUsr().get(GerenciaSessao.KEY_CPF)+"&cd_servico=1208"));
 
         }catch(IOException e){
 
@@ -77,6 +89,15 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
 
     @Override
     protected void onPostExecute(List<FocoAedes> result) {
+
+        adapter = new ListaFocoAedes(contexto, R.layout.lista_foco_aedes, result);
+        listFcAedesView = (ListView) ((Activity) contexto).findViewById(R.id.list_foco_aedes);
+
+        if(result != null){
+
+            listFcAedesView.setAdapter(adapter);
+
+        }
 
         pd.dismiss();
 

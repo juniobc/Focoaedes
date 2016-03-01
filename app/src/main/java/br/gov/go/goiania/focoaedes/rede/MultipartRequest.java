@@ -93,8 +93,8 @@ public class MultipartRequest extends Request<String> {
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
 
         try {
-            System.out.println("Network Response "+ new String(response.data, "UTF-8"));
-            return Response.success(new String(response.data, "UTF-8"),
+            System.out.println("Network Response "+ new String(response.data,"ISO-8859-1"));
+            return Response.success(new String(response.data, "ISO-8859-1"),
                     getCacheEntry());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
