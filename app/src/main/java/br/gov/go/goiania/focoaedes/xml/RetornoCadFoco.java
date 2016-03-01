@@ -13,6 +13,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.gov.go.goiania.focoaedes.entidades.Menssagem;
+
 public class RetornoCadFoco extends TrataXml {
 
     private static final String TAG = "RetornoCadFoco";
@@ -21,14 +23,15 @@ public class RetornoCadFoco extends TrataXml {
 
     public RetornoCadFoco(){}
 
-    public String executa(String xml) throws IOException, XmlPullParserException {
+    public Menssagem executa(String xml) throws IOException, XmlPullParserException {
 
         String verificaXml = verificaErroString(parseString(xml));
 
         if(verificaXml == null)
-            return leXml(parseString(xml)).get(0).toString();
+            return new Menssagem(0,leXml(parseString(xml)).get(0).toString());
         else
-            return verificaXml;
+            return new Menssagem(1,verificaXml);
+
     }
 
     @Override
@@ -44,7 +47,7 @@ public class RetornoCadFoco extends TrataXml {
             }
             String name = parser.getName();
             if (name.equals("ds")) {
-                retorno.set(0,le(parser,"ds"));
+                retorno.add(le(parser,"ds"));
             } else {
                 skip(parser);
             }

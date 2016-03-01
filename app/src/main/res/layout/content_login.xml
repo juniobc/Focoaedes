@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,32 +8,41 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="br.gov.go.goiania.focoaedes.Login"
     tools:showIn="@layout/login"
-    android:orientation="vertical"
+    android:layout_marginTop="50dp"
     android:gravity="center">
 
-    <EditText
-        android:id="@+id/nr_cpf"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nr_cpf"/>
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <EditText
-        android:id="@+id/nm_usuario"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nm_usuario"/>
+        <EditText
+            android:id="@+id/nr_cpf"
+            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:hint="@string/nr_cpf"/>
 
-    <EditText
-        android:id="@+id/nm_email"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:hint="@string/nm_email"/>
+        <EditText
+            android:id="@+id/nm_usuario"
+            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:hint="@string/nm_usuario"/>
 
-    <Button
-        android:id="@+id/btn_entrar"
-        android:layout_height="wrap_content"
-        android:layout_width="280dp"
-        android:text="Entrar"
-        android:onClick="entrar"/>
+        <EditText
+            android:id="@+id/nm_email"
+            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:hint="@string/nm_email"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_entrar"
+            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:text="Entrar"
+            android:onClick="entrar"/>
+
+    </LinearLayout>
+</ScrollView>

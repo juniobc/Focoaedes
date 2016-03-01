@@ -9,6 +9,8 @@ import android.media.Image;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,8 +42,9 @@ public class CadastroEndereco extends Fragment {
     private ImageView imgFoto;
     private Button btnTiraFoto;
 
-    private Spinner selTpLogr;
+    //private Spinner selTpLogr;
     private ArrayAdapter<CharSequence> adapter;
+    private static BuscaEnderecoAdapter adapterLogr;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,13 +61,13 @@ public class CadastroEndereco extends Fragment {
 
         this.imgFoto = (ImageView) view.findViewById(R.id.img_foto);
 
-        selTpLogr = (Spinner) view.findViewById(R.id.sel_tp_logr);
+        //selTpLogr = (Spinner) view.findViewById(R.id.sel_tp_logr);
 
 
         adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.sel_tp_logr, android.R.layout.simple_spinner_item);
 
-        selTpLogr.setAdapter(adapter);
+        //selTpLogr.setAdapter(adapter);
 
         BuscaEnderecoAdapter adapterBairro = new BuscaEnderecoAdapter(getActivity(),0);
 
@@ -74,30 +77,38 @@ public class CadastroEndereco extends Fragment {
         this.buscaBairro.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                
-                /*if (!buscaBairro.isSelectionFromPopUp()) {
+
+                if ((txtCdBairro.getText().toString().equals("0") || txtCdBairro.getText().toString().equals(""))
+                        && !buscaBairro.getText().toString().equals("")) {
+
                     buscaBairro.setText("");
                     txtCdBairro.setText("");
                     buscaLogr.setText("");
-                }*/
-                Log.d(TAG, "onFocusChange - txtCdBairro: " + txtCdBairro.getText().toString());
-                if ((txtCdBairro.getText().toString().equals("0") || txtCdBairro.getText().toString().equals("")) && buscaBairro.hasFocus()) {
-
-                    buscaBairro.setText("");
-                    buscaLogr.setText("");
                     txtCdLogr.setText("");
 
-                    if (!buscaBairro.getText().toString().equals(""))
-                        new AlertDialog.Builder(getActivity())
-                                .setMessage("Bairro não encontrado!")
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                })
-                                .show();
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Bairro não encontrado!")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            })
+                            .show();
 
                 }
+            }
+        });
+
+        this.buscaBairro.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                buscaBairro.setText("");
+                txtCdBairro.setText("");
+                buscaLogr.setText("");
+                txtCdLogr.setText("");
+
+                return false;
             }
         });
 
@@ -117,7 +128,7 @@ public class CadastroEndereco extends Fragment {
                     cdBairro = 0;
                 }
 
-                BuscaEnderecoAdapter adapterLogr = new BuscaEnderecoAdapter(getActivity(), 1, cdBairro);
+                adapterLogr = new BuscaEnderecoAdapter(getActivity(), 1, cdBairro);
 
                 buscaLogr.setAdapter(adapterLogr);
 
@@ -135,26 +146,15 @@ public class CadastroEndereco extends Fragment {
             }
         });
 
-        this.buscaBairro.setOnTouchListener(new View.OnTouchListener() {
+        this.buscaLogr.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
-                txtCdBairro.setText("");
-                buscaLogr.setText("");
-                txtCdLogr.setText("");
-
-                return false;
-            }
-        });
-
-        /*this.buscaLogr.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "buscaLogr.setOnTouchListener - txtCdBairro: " + txtCdBairro.getText().toString());
-                Log.d(TAG, "buscaLogr.setOnTouchListener - txtCdLogr: " + txtCdLogr.getText().toString());
+                Log.d(TAG, "buscaLogr.onTouch - txtCdBairro: " + txtCdBairro.getText().toString());
+                Log.d(TAG, "buscaLogr.onTouch - buscaLogr.hasFocus(): " + buscaLogr.hasFocus());
                 if (txtCdBairro.getText().toString().equals("") || txtCdBairro.getText().toString().equals("0")) {
 
-                    if (buscaLogr.hasFocus()) {
+                    //if (buscaLogr.hasFocus()) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
                         new AlertDialog.Builder(getActivity())
                                 .setMessage("Informe o bairro!")
                                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -164,24 +164,21 @@ public class CadastroEndereco extends Fragment {
                                 }).show();
 
                         buscaLogr.setText("");
-                        txtCdLogr.setText("");
+                        txtCdLogr.setText("");}
 
-                    }
+                    //}
 
                 }
 
                 return false;
             }
-        });*/
+        });
 
         this.buscaLogr.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                /*if (!buscaLogr.isSelectionFromPopUp()) {
-                    buscaLogr.setText("");
-                }*/
 
-                if (txtCdLogr.getText().toString().equals("0") || txtCdLogr.getText().toString().equals("")) {
+                if ((txtCdLogr.getText().toString().equals("0") || txtCdLogr.getText().toString().equals("")) && !buscaLogr.getText().toString().equals("")) {
 
                     buscaLogr.setText("");
                     txtCdLogr.setText("");

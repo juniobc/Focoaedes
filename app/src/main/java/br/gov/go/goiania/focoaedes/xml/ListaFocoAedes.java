@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
+import br.gov.go.goiania.focoaedes.entidades.Menssagem;
 
 public class ListaFocoAedes extends TrataXml {
 
@@ -19,7 +20,16 @@ public class ListaFocoAedes extends TrataXml {
 
     public List<FocoAedes> executa(InputStream in) throws IOException, XmlPullParserException {
 
-        return leXml(parseInputStream(in));
+        String retorno;
+
+        retorno = verificaErroString(parseInputStream(in));
+
+        if(retorno == null)
+            return leXml(parseInputStream(in));
+        else{
+            return null;
+        }
+
     }
 
     private static final String ns = null;
@@ -33,9 +43,10 @@ public class ListaFocoAedes extends TrataXml {
 
         parser.require(XmlPullParser.START_TAG, ns, "dt");
 
-        while (count < 10) {
-            if(parser.next() != XmlPullParser.END_TAG){
-                parser.next();
+        while (parser.next() != XmlPullParser.END_TAG) {
+
+            //if(parser.next() != XmlPullParser.END_TAG){
+            if(count < 20){
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }
@@ -46,8 +57,9 @@ public class ListaFocoAedes extends TrataXml {
                 } else {
                     skip(parser);
                 }
-
             }
+
+            //}
 
             count++;
 

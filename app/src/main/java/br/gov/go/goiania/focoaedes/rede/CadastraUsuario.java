@@ -1,8 +1,10 @@
 package br.gov.go.goiania.focoaedes.rede;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
@@ -37,6 +39,7 @@ public class CadastraUsuario extends AsyncTask<Void, Void, String> {
     private Context contexto;
     private String cdUsuario = null;
     private Usuario usuario;
+    private int cdErro = 0;
     private static final String ns = null;
 
     public CadastraUsuario(Login login, Context contexto, Usuario usuario){
@@ -80,17 +83,33 @@ public class CadastraUsuario extends AsyncTask<Void, Void, String> {
 
         Log.d(TAG, "onPostExecute - result: " + result);
 
-        UsuarioDB usrDB;
+        if(cdErro == 0){
 
-        usrDB = new UsuarioDB(contexto);
+            UsuarioDB usrDB;
 
-        usuario.setCdUsr(Integer.parseInt(result));
+            usrDB = new UsuarioDB(contexto);
 
-        usrDB.addUsuario(usuario);
+            usuario.setCdUsr(Integer.parseInt(result));
 
-        login.sessao.criaSessaoLogin(String.valueOf(usuario.getCdUsr()), usuario.getNrCpf(), usuario.getNmUsr(), usuario.getDsEmail());
+            usrDB.addUsuario(usuario);
 
-        login.acessaHome();
+            login.sessao.criaSessaoLogin(String.valueOf(usuario.getCdUsr()), usuario.getNrCpf(), usuario.getNmUsr(), usuario.getDsEmail());
+
+            login.acessaHome();
+
+        }else{
+
+            result = result.substring(0, 1).toUpperCase() + result.substring(1).toLowerCase();
+
+            new AlertDialog.Builder(contexto)
+                    .setMessage(result)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    })
+                    .show();
+
+        }
 
         /*for (FocoAedes temp : result) {
             //Toast.makeText(contexto, temp.getCdFocoAedes(), Toast.LENGTH_SHORT).show();
@@ -118,29 +137,55 @@ public class CadastraUsuario extends AsyncTask<Void, Void, String> {
     public String parse(InputStream in) throws XmlPullParserException, IOException {
 
         try {
+
+            String retorno;
+
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
-            if (verificaErro(parser))
-                return null;
+
+            retorno = verificaErro(parser);
+            if (retorno != null)
+                return retorno;
             else
                 return leXml(parser);
+
         } finally {
             in.close();
         }
     }
 
-    public boolean verificaErro(XmlPullParser parser) throws IOException{
+    public String verificaErro(XmlPullParser parser) throws IOException{
         try{
+            Log.d(TAG, "verificaErro");
+            String retorno = "Erro ao cadastrar usuário! Tente novamente mais tarde.";
 
             parser.require(XmlPullParser.START_TAG, ns, "msg");
 
-            return true;
+            while (parser.next() != XmlPullParser.END_TAG) {
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+                String name = parser.getName();
+                if (name.equals("ds")) {
+                    retorno = le(parser,"ds");
+                } else {
+                    skip(parser);
+                }
+            }
+
+            cdErro = 1;
+
+            return retorno;
 
         }catch(XmlPullParserException e){
 
-            return false;
+            Log.d(TAG, "verificaErro - XmlPullParserException: "+e.toString());
+
+            e.printStackTrace();
+
+            return null;
 
         }
     }

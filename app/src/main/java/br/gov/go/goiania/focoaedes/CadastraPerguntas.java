@@ -17,7 +17,7 @@ public class CadastraPerguntas extends Fragment {
     private Spinner tpLocal;
     private Spinner selLoteVago;
     private ArrayAdapter<CharSequence> adapter;
-    private EditText ds_horario;
+    //private EditText ds_horario;
     private static TextView txtLoteVago;
     private CheckBox stLocal8;
 

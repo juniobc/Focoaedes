@@ -39,7 +39,7 @@ public class CadastraFoco extends AppCompatActivity{
     private TextView cdLogr;
 
     private Spinner selTpLocal;
-    private EditText melhorHorario;
+    //private EditText melhorHorario;
     private CheckBox chkStLocal1;
     private CheckBox chkStLocal2;
     private CheckBox chkStLocal3;
@@ -55,11 +55,9 @@ public class CadastraFoco extends AppCompatActivity{
     private EditText dsQuadra;
     private EditText dsLote;
     private EditText dsNumero;
-    private Spinner selTpLogr;
+    //private Spinner selTpLogr;
 
     private GerenciaSessao sessao;
-
-    private String retorno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +131,7 @@ public class CadastraFoco extends AppCompatActivity{
         dsQuadra = (EditText) viewPager.findViewById(R.id.nm_qudra);
         dsLote = (EditText) viewPager.findViewById(R.id.nm_lote);
         dsNumero = (EditText) viewPager.findViewById(R.id.nm_numero);
-        selTpLogr = (Spinner) viewPager.findViewById(R.id.sel_tp_logr);
+        //selTpLogr = (Spinner) viewPager.findViewById(R.id.sel_tp_logr);
 
         dsFocoAedes = (EditText) viewPager.findViewById(R.id.ds_foco_aedes);
         cdBairro = (TextView) viewPager.findViewById(R.id.cd_bairro);
@@ -141,7 +139,7 @@ public class CadastraFoco extends AppCompatActivity{
 
         selTpLocal = (Spinner) viewPager.findViewById(R.id.tp_local);
 
-        melhorHorario = (EditText) viewPager.findViewById(R.id.ds_horario);
+        //melhorHorario = (EditText) viewPager.findViewById(R.id.ds_horario);
         chkStLocal1 = (CheckBox) viewPager.findViewById(R.id.st_local_1);
         chkStLocal2 = (CheckBox) viewPager.findViewById(R.id.st_local_2);
         chkStLocal3 = (CheckBox) viewPager.findViewById(R.id.st_local_3);
@@ -157,7 +155,7 @@ public class CadastraFoco extends AppCompatActivity{
 
     }
 
-    public boolean cadastraFoco(){
+    public void cadastraFoco(){
 
         iniViewPagerVariaveis();
 
@@ -200,7 +198,8 @@ public class CadastraFoco extends AppCompatActivity{
             params.put("txt_en_qd_logr_solicitacao",dsLote.getText().toString());
             params.put("txt_en_nr_logr_solicitacao",dsNumero.getText().toString());
 
-            params.put("txt_tp_logr_solicitacao",selTpLogr.getItemAtPosition(selTpLogr.getSelectedItemPosition()).toString());
+            //params.put("txt_tp_logr_solicitacao",selTpLogr.getItemAtPosition(selTpLogr.getSelectedItemPosition()).toString());
+            params.put("txt_tp_logr_solicitacao","");
             params.put("txt_nm__munic_solicitacao","GOIANIA");
             params.put("txt_nm_bairro_solicitacao",dsBairro.getText().toString());
             params.put("txt_nm_logr_solicitacao",dsLogr.getText().toString());
@@ -260,15 +259,10 @@ public class CadastraFoco extends AppCompatActivity{
 
             EnviaFoco envia = new EnviaFoco(this, params, paramsDesc);
 
-            if(envia.executa() != null) {
-                retorno = envia.executa();
-                return true;
-            }else
-                return false;
+
+            envia.executa();
 
         }
-
-        return false;
 
     }
 
@@ -294,19 +288,19 @@ public class CadastraFoco extends AppCompatActivity{
 
         }
 
-        /*if(selTpLocal.getSelectedItemPosition() == 0){
+        if(selTpLocal.getSelectedItemPosition() == 0){
 
             Toast.makeText(CadastraFoco.this, "Informe o tipo do local!", Toast.LENGTH_LONG).show();
             return false;
 
         }
 
-        if(melhorHorario.getText().toString().equals("")){
+        /*if(melhorHorario.getText().toString().equals("")){
 
             Toast.makeText(CadastraFoco.this, "Informe o melhor horario para visita!", Toast.LENGTH_LONG).show();
             return false;
 
-        }
+        }*/
 
         if(chkStLocal1.isChecked())
             flagStLocal = false;
@@ -347,7 +341,7 @@ public class CadastraFoco extends AppCompatActivity{
         if(flagStLocal){
             Toast.makeText(CadastraFoco.this, "Informe a situação do local!", Toast.LENGTH_LONG).show();
             return false;
-        }*/
+        }
 
         return true;
 

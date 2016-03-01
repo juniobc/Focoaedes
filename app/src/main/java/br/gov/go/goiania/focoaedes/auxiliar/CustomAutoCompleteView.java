@@ -12,28 +12,6 @@ public class CustomAutoCompleteView extends AutoCompleteTextView {
 
     private static final String TAG = "CustomAutoCompleteView";
 
-    {
-        addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                /** no-op */
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                /** no-op */
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d(TAG, "afterTextChanged ");
-                mSelectionFromPopUp = false;
-            }
-        });
-    }
-
-    private boolean mSelectionFromPopUp;
-
     public CustomAutoCompleteView(Context context) {
         super(context);
         // TODO Auto-generated constructor stub
@@ -83,13 +61,7 @@ public class CustomAutoCompleteView extends AutoCompleteTextView {
     @Override
     protected void replaceText(final CharSequence text) {
         super.replaceText(text);
-        Log.d(TAG, "replaceText ");
-        mSelectionFromPopUp = true;
 
-    }
-
-    public boolean isSelectionFromPopUp() {
-        return mSelectionFromPopUp;
     }
 
 }

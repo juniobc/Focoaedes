@@ -43,6 +43,7 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
     private ProgressDialog pd;
     private Context contexto;
     private String msg_erro;
+    private int cdErro = 0;
     private ListView listFcAedesView;
     private ListaFocoAedes adapter;
 
@@ -76,10 +77,13 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
 
         }catch(IOException e){
 
+            cdErro = 1;
+
             msg_erro = e.toString();
             e.printStackTrace();
 
         } catch (XmlPullParserException e) {
+            cdErro = 1;
             msg_erro = e.toString();
             e.printStackTrace();
         }
@@ -103,9 +107,12 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
 
         if(result != null){
             Log.d(TAG, "onPostExecute - result.size(): " + result.size());
-        }else{
+        }else if(cdErro == 1){
             Log.d(TAG, "onPostExecute - erro msg: "+msg_erro);
             Toast.makeText(contexto, "Não foi possivel carregar as solicitações!", Toast.LENGTH_SHORT).show();
+        }else{
+            Log.d(TAG, "onPostExecute - cd_erro: 1");
+            Toast.makeText(contexto, "Nenhuma solicitação encontrada para este CPF!", Toast.LENGTH_SHORT).show();
         }
 
         //Log.d(TAG, "onPostExecute - result.size(): " + result.size());
@@ -119,6 +126,10 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
 
     private InputStream downloadUrl(String urlString) throws IOException {
 
+        Log.d(TAG, "downloadUrl - urlString: "+urlString);
+
+        InputStream in;
+
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
@@ -126,6 +137,15 @@ public class ConsultaFocoAedes extends AsyncTask<Void, Void, List<FocoAedes>> {
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         conn.connect();
+
+        /*BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+
+        Log.d(TAG, "downloadUrl - resposta: "+total);*/
 
         return conn.getInputStream();
     }

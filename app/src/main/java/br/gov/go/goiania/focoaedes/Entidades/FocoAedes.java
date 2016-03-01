@@ -13,6 +13,7 @@ public class FocoAedes {
     private String hrAbertura;
     private String dtStatus;
     private String hrStatus;
+    private Menssagem msgErro;
 
     public FocoAedes(){}
 
@@ -114,5 +115,14 @@ public class FocoAedes {
 
     public void setHrStatus(String hrStatus) {
         this.hrStatus = hrStatus;
+    }
+
+
+    public Menssagem getMsgErro() {
+        return msgErro;
+    }
+
+    public void setMsgErro(Menssagem msgErro) {
+        this.msgErro = msgErro;
     }
 }

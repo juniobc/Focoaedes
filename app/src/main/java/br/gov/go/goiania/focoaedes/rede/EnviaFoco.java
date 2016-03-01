@@ -36,6 +36,7 @@ import br.gov.go.goiania.focoaedes.R;
 import br.gov.go.goiania.focoaedes.auxiliar.DbBitmapUtility;
 import br.gov.go.goiania.focoaedes.banco.FocoAedesDB;
 import br.gov.go.goiania.focoaedes.entidades.FocoAedes;
+import br.gov.go.goiania.focoaedes.entidades.Menssagem;
 import br.gov.go.goiania.focoaedes.xml.RetornoCadFoco;
 
 public class EnviaFoco {
@@ -55,7 +56,9 @@ public class EnviaFoco {
     private Map<String,String> params;
     private Map<String,String> paramsDesc;
 
-    private static String retorno = null;
+    private static int cdErro = 0;
+
+    private static Menssagem retorno = null;
 
     public EnviaFoco(Context contexto, Map<String,String> params, Map<String,String> paramsDesc){
 
@@ -66,7 +69,7 @@ public class EnviaFoco {
 
     }
 
-    public String executa(){
+    public void executa(){
 
         String descricao = "";
 
@@ -128,7 +131,6 @@ public class EnviaFoco {
             public void onErrorResponse(VolleyError error) {
                 pd.dismiss();
                 Log.d(TAG, "onResponse: " + error.toString());
-                retorno = null;
                 new AlertDialog.Builder(contexto)
                         .setMessage("Ocorreu um erro no envio! Tente novamente.")
                         .show();
@@ -144,28 +146,32 @@ public class EnviaFoco {
                 } catch (XmlPullParserException e) {
                     Log.d(TAG, "Response.Listener - XmlPullParserException: " + e.toString());
 
-                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
+                    retorno = new Menssagem(1, "Solicitação incluida! Não foi possivel obter o numero da solicitação.");
 
                 } catch (IOException e) {
-                    Log.d(TAG, "Response.Listener - XmlPullParserException: " + e.toString());
+                    Log.d(TAG, "Response.Listener - IOException: " + e.toString());
 
-                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
+                    retorno = new Menssagem(1, "Ocorreu um erro, tente novamente!.");
                 }
 
                 if(retorno == null){
-                    retorno = "Solicitação incluida! Não foi possivel obter o numero da solicitação.";
+                    retorno = new Menssagem(1, "Solicitação incluida! Não foi possivel obter o numero da solicitação.");
 
                 }
 
+                retorno.setDsMsg(retorno.getDsMsg().substring(0,1).toUpperCase() + retorno.getDsMsg().substring(1).toLowerCase());
+
                 new AlertDialog.Builder(contexto)
-                        .setMessage(retorno)
+                        .setMessage(retorno.getDsMsg())
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
                             public void onClick(DialogInterface dialog, int id) {
 
-                                ((Activity) contexto).setResult(((Activity)contexto).RESULT_OK);
-
-                        ((Activity) contexto).finish();
-                    }
+                                if(retorno.getCdMsg() == 0){
+                                    ((Activity) contexto).setResult(((Activity)contexto).RESULT_OK);
+                                    ((Activity) contexto).finish();
+                                }
+                        }
                 })
                 .show();
 
@@ -182,8 +188,6 @@ public class EnviaFoco {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(stringRequest);
-
-        return retorno;
 
     }
 
